@@ -96,6 +96,7 @@ namespace VotesTotUp.Managers
         {
             RegisterViewModel<MainWindowViewModel, MainWindow>();
             RegisterViewModel<LoginViewModel, LoginView>();
+            RegisterViewModel<CalculatorViewModel, CalculatorView>();
         }
 
         #endregion Methods
