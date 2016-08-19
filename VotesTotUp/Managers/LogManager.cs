@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VotesTotUp.Managers
+﻿namespace VotesTotUp.Managers
 {
     public class LogManager
     {
-        #region Ctors (singleton)
+        #region Fields
 
         private static readonly log4net.ILog log =
                log4net.LogManager.GetLogger(typeof(LogManager));
 
         private static LogManager _instance;
+
+        #endregion Fields
+
+        #region Properties
+
         public static LogManager Instance
         {
             get
@@ -26,10 +25,9 @@ namespace VotesTotUp.Managers
             }
         }
 
+        #endregion Properties
 
-        #endregion
-
-        #region Public methods
+        #region Methods
 
         public void LogError(string message)
         {
@@ -46,6 +44,6 @@ namespace VotesTotUp.Managers
             log.Warn(message);
         }
 
-        #endregion
+        #endregion Methods
     }
 }
