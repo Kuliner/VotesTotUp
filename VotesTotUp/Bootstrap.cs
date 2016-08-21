@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Controls;
@@ -12,7 +13,10 @@ namespace VotesTotUp
 
         internal async static void InitAsync(ContentControl windowContent)
         {
-            Database.SetInitializer<DbModelContainer>(new CreateDatabaseIfNotExists<DbModelContainer>());
+            string executable = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string path = (System.IO.Path.GetDirectoryName(executable));
+
+            AppDomain.CurrentDomain.SetData("DataDirectory", path); Database.SetInitializer<DbModelContainer>(new CreateDatabaseIfNotExists<DbModelContainer>());
             Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
 
             LogManager.Instance.LogInfo("Application is starting.");

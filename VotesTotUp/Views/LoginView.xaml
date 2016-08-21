@@ -8,8 +8,9 @@
                 MinHeight="300"
                 MaxWidth="300"
                 MaxHeight="300"
+                xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                 d:DesignHeight="300"
-                d:DesignWidth="300"
+                d:DesignWidth="300" Keyboard.PreviewKeyDown="ContentControl_PreviewKeyDown"
                 mc:Ignorable="d">
 
     <ContentControl.Resources>
@@ -73,9 +74,10 @@
                      Text="{Binding Pesel,
                                     Mode=TwoWay,
                                     UpdateSourceTrigger=PropertyChanged}"
-                     TextWrapping="Wrap" />
+                     TextWrapping="Wrap" >
+            </TextBox>
         </Grid>
-        <Button x:Name="button"
+        <Button x:Name="login"
                 Grid.Row="2"
                 Width="75"
                 Height="20"

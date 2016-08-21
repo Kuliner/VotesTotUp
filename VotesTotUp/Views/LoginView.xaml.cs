@@ -15,5 +15,13 @@ namespace VotesTotUp.Views
         }
 
         #endregion Constructors
+
+        private void ContentControl_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                login.Command.Execute(this);
+            }
+        }
     }
 }

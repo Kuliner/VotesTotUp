@@ -2,13 +2,13 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/21/2016 16:57:08
+-- Date Created: 08/21/2016 19:55:56
 -- Generated from EDMX file: C:\Users\Rafal\Documents\Visual Studio 2015\Projects\VotesTotUp\VotesTotUp\DbModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
 GO
-USE [VotersDb];
+USE [Elecetions];
 GO
 IF SCHEMA_ID(N'dbo') IS NULL EXECUTE(N'CREATE SCHEMA [dbo]');
 GO
@@ -39,6 +39,9 @@ IF OBJECT_ID(N'[dbo].[PartySet]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[VoterSet]', 'U') IS NOT NULL
     DROP TABLE [dbo].[VoterSet];
+GO
+IF OBJECT_ID(N'[dbo].[Statistics]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Statistics];
 GO
 IF OBJECT_ID(N'[dbo].[VoterCandidate]', 'U') IS NOT NULL
     DROP TABLE [dbo].[VoterCandidate];

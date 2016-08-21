@@ -81,6 +81,8 @@ namespace VotesTotUp.ViewModel
         {
             try
             {
+                if (FirstName == null || LastName == null || Pesel == null)
+                    return;
                 ValidateName(FirstName, LastName);
                 ValidatePesel(Pesel);
                 Result result;
