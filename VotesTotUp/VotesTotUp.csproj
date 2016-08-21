@@ -35,12 +35,32 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Caelan.Frameworks.Common, Version=3.3.1.260, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caelan.Frameworks.Common.3.3.1.260\lib\net45\Caelan.Frameworks.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Caelan.Frameworks.PasswordEncryption, Version=3.3.2.15, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caelan.Frameworks.PasswordEncryption.3.3.2.15\lib\net45\Caelan.Frameworks.PasswordEncryption.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Caelan.Frameworks.PasswordHashing, Version=3.3.2.14, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Caelan.Frameworks.PasswordHashing.3.3.2.14\lib\net45\Caelan.Frameworks.PasswordHashing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="De.TorstenMandelkow.MetroChart, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d5b8d1bbc99c4a2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\De.TorstenMandelkow.MetroChart.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FSharp.Core, Version=4.4.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\FSharp.Core.4.0.0.1\lib\net40\FSharp.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
@@ -55,6 +75,14 @@
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="IronPdf, Version=4.0.2.32058, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\IronPdf.4.2.2\lib\net40\IronPdf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Linq.Csv, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Linq.Csv.1.2\lib\net45\Linq.Csv.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
@@ -67,11 +95,17 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RandomNameGenerator, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RandomNameGenerator.1.0.4\lib\RandomNameGenerator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -99,7 +133,13 @@
     <Compile Include="Candidate.cs">
       <DependentUpon>VotersDbModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Data\Services\CandidateService.cs" />
+    <Compile Include="Data\ControlBase.cs" />
+    <Compile Include="Data\CandidateControl.cs" />
+    <Compile Include="Data\PartyControl.cs" />
+    <Compile Include="Data\Enum.cs" />
+    <Compile Include="Data\Helpers\InvertBoolConverter.cs" />
+    <Compile Include="Data\Helpers\Encryption.cs" />
+    <Compile Include="Data\Database\Services\CandidateService.cs" />
     <Compile Include="DbModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -108,22 +148,26 @@
     <Compile Include="Managers\CurrentSessionManager.cs" />
     <Compile Include="Managers\DatabaseManager.cs" />
     <Compile Include="Managers\LogManager.cs" />
-    <Compile Include="Data\Services\PartyService.cs" />
+    <Compile Include="Data\Database\Services\PartyService.cs" />
     <Compile Include="Managers\ViewManager.cs" />
     <Compile Include="Data\ViewModelConnection.cs" />
-    <Compile Include="Data\Services\VoterService.cs" />
+    <Compile Include="Data\Database\Services\VoterService.cs" />
     <Compile Include="Party.cs">
       <DependentUpon>VotersDbModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\CalculatorViewModel.cs" />
+    <Compile Include="ViewModel\StatisticsViewModel.cs" />
+    <Compile Include="ViewModel\VoterViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Views\CalculatorView.xaml.cs">
-      <DependentUpon>CalculatorView.xaml</DependentUpon>
+    <Compile Include="Views\StatisticsView.xaml.cs">
+      <DependentUpon>StatisticsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\VoterView.xaml.cs">
+      <DependentUpon>VoterView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
@@ -134,10 +178,15 @@
     <Compile Include="Voter.cs">
       <DependentUpon>VotersDbModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="VotersDbModel.Context.cs">
+    <Compile Include="VoterDb.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>VotersDbModel.Context.tt</DependentUpon>
+      <DependentUpon>VoterDb.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="VoterDb.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VoterDb.tt</DependentUpon>
     </Compile>
     <Compile Include="VotersDbModel.cs">
       <AutoGen>True</AutoGen>
@@ -180,7 +229,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Views\CalculatorView.xaml">
+    <Page Include="Views\StatisticsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\VoterView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -198,9 +251,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DbModel.edmx.sql" />
-    <Content Include="VotersDbModel.Context.tt">
+    <Content Include="Libraries\De.TorstenMandelkow.MetroChart.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="VoterDb.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>VotersDbModel.Context.cs</LastGenOutput>
+      <LastGenOutput>VoterDb.Context.cs</LastGenOutput>
+      <DependentUpon>DbModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="VoterDb.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VoterDb.cs</LastGenOutput>
       <DependentUpon>DbModel.edmx</DependentUpon>
     </Content>
     <Content Include="VotersDbModel.tt">
@@ -209,6 +270,7 @@
       <DependentUpon>DbModel.edmx</DependentUpon>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

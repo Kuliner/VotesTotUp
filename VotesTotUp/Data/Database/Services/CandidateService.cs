@@ -1,12 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using VotesTotUp.Managers;
 
-namespace VotesTotUp.Data.Services
+namespace VotesTotUp.Data.Database.Services
 {
     public class CandidateService
     {
+        #region Fields
+
+        private DbModelContainer _dbContext;
+
+        #endregion Fields
+
+        #region Constructors
+
+        public CandidateService(DbModelContainer db)
+        {
+            _dbContext = db;
+        }
+
+        #endregion Constructors
+
         #region Methods
 
         public bool Add(Candidate entity)
@@ -16,12 +33,9 @@ namespace VotesTotUp.Data.Services
                 if (entity.Name == null || entity.Party == null)
                     throw new Exception("Name and Party fields must not be null");
 
-                using (var context = new DbModelContainer())
-                {
-                    context.PartySet.Attach(entity.Party);
-                    context.CandidateSet.Add(entity);
-                    context.SaveChanges();
-                }
+                _dbContext.PartySet.Attach(entity.Party);
+                _dbContext.CandidateSet.Add(entity);
+                _dbContext.SaveChanges();
 
                 return true;
             }
@@ -36,10 +50,14 @@ namespace VotesTotUp.Data.Services
         {
             try
             {
-                using (var context = new DbModelContainer())
-                {
-                    return context.CandidateSet.Include(nameof(Candidate.Party)).Include(nameof(Candidate.Voters)).ToList();
-                }
+                var cands = _dbContext.CandidateSet.Include(nameof(Candidate.Party)).Include(nameof(Candidate.Voters)).ToList();
+
+                var context = ((IObjectContextAdapter)_dbContext).ObjectContext;
+                context.Refresh(RefreshMode.StoreWins, cands);
+
+                cands = _dbContext.CandidateSet.Include(nameof(Candidate.Party)).Include(nameof(Candidate.Voters)).ToList();
+
+                return cands;
             }
             catch (Exception ex)
             {
@@ -52,10 +70,10 @@ namespace VotesTotUp.Data.Services
         {
             try
             {
-                using (var context = new DbModelContainer())
-                {
-                    return context.CandidateSet.FirstOrDefault(x => x.Name == name);
-                }
+                var context = ((IObjectContextAdapter)_dbContext).ObjectContext;
+                context.Refresh(RefreshMode.StoreWins, context.ObjectStateManager.GetObjectStateEntries(System.Data.Entity.EntityState.Modified));
+
+                return _dbContext.CandidateSet.FirstOrDefault(x => x.Name == name);
             }
             catch (Exception ex)
             {
@@ -68,10 +86,10 @@ namespace VotesTotUp.Data.Services
         {
             try
             {
-                using (var context = new DbModelContainer())
-                {
-                    return context.CandidateSet.FirstOrDefault(x => x.Id == id);
-                }
+                var context = ((IObjectContextAdapter)_dbContext).ObjectContext;
+                context.Refresh(RefreshMode.StoreWins, context.ObjectStateManager.GetObjectStateEntries(System.Data.Entity.EntityState.Modified));
+
+                return _dbContext.CandidateSet.FirstOrDefault(x => x.Id == id);
             }
             catch (Exception ex)
             {
@@ -84,14 +102,12 @@ namespace VotesTotUp.Data.Services
         {
             try
             {
-                using (var context = new DbModelContainer())
-                {
-                    var found = context.CandidateSet.FirstOrDefault(x => x.Id == id);
-                    if (found == null)
-                        throw new Exception($"DB:{ this.GetType().ToString()} entity with id {id} not found!");
-                    context.CandidateSet.Remove(found);
-                    context.SaveChanges();
-                }
+                var found = _dbContext.CandidateSet.FirstOrDefault(x => x.Id == id);
+                if (found == null)
+                    throw new Exception($"DB:{ this.GetType().ToString()} entity with id {id} not found!");
+                _dbContext.CandidateSet.Remove(found);
+                _dbContext.SaveChanges();
+
                 return true;
             }
             catch (Exception ex)
@@ -105,11 +121,9 @@ namespace VotesTotUp.Data.Services
         {
             try
             {
-                using (var context = new DbModelContainer())
-                {
-                    context.CandidateSet.Remove(entity);
-                    context.SaveChanges();
-                }
+                _dbContext.CandidateSet.Remove(entity);
+                _dbContext.SaveChanges();
+
                 return true;
             }
             catch (Exception ex)
@@ -126,14 +140,11 @@ namespace VotesTotUp.Data.Services
                 if (entity.Name == null || entity.Party == null)
                     throw new Exception("Name and Party fields must not be null");
 
-                using (var context = new DbModelContainer())
-                {
-                    var found = context.CandidateSet.FirstOrDefault(x => x.Id == entity.Id);
-                    if (found == null)
-                        throw new Exception($"DB:{ this.GetType().ToString()} entity with id {entity.Id} not found!");
-                    found = entity;
-                    context.SaveChanges();
-                }
+                var found = _dbContext.CandidateSet.FirstOrDefault(x => x.Id == entity.Id);
+                if (found == null)
+                    throw new Exception($"DB:{ this.GetType().ToString()} entity with id {entity.Id} not found!");
+                found = entity;
+                _dbContext.SaveChanges();
 
                 return true;
             }

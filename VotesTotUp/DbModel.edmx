@@ -9,13 +9,18 @@
     <EntitySet Name="CandidateSet" EntityType="DbModel.Store.CandidateSet" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="PartySet" EntityType="DbModel.Store.PartySet" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="VoterSet" EntityType="DbModel.Store.VoterSet" store:Type="Tables" Schema="dbo" />
-    <AssociationSet Name="VoterCandidate" Association="DbModel.Store.VoterCandidate">
-      <End Role="Voter" EntitySet="VoterSet" />
-      <End Role="Candidate" EntitySet="CandidateSet" />
-    </AssociationSet>
+    <EntitySet Name="VoterCandidate" EntityType="DbModel.Store.VoterCandidate" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="PartyCandidate" Association="DbModel.Store.PartyCandidate">
       <End Role="Party" EntitySet="PartySet" />
       <End Role="Candidate" EntitySet="CandidateSet" />
+    </AssociationSet>
+    <AssociationSet Name="FK_VoterCandidate_Voter" Association="DbModel.Store.FK_VoterCandidate_Voter">
+      <End Role="Voter" EntitySet="VoterSet" />
+      <End Role="VoterCandidate" EntitySet="VoterCandidate" />
+    </AssociationSet>
+    <AssociationSet Name="FK_VoterCandidate_Candidate" Association="DbModel.Store.FK_VoterCandidate_Candidate">
+      <End Role="Candidate" EntitySet="CandidateSet" />
+      <End Role="VoterCandidate" EntitySet="VoterCandidate" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="CandidateSet">
@@ -41,21 +46,17 @@
     <Property Name="FirstName" Type="nvarchar(max)" Nullable="false" />
     <Property Name="LastName" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Pesel" Type="nvarchar(max)" Nullable="false" />
-    <Property Name="Voted" Type="bit" StoreGeneratedPattern="Computed" Nullable="false" />
-    <Property Name="Candidate_Id" Type="int" Nullable="false" />
+    <Property Name="Voted" Type="bit" Nullable="false" />
+    <Property Name="VoteValid" Type="bit" Nullable="false" />
   </EntityType>
-  <Association Name="VoterCandidate">
-    <End Role="Voter" Type="DbModel.Store.VoterSet" Multiplicity="*" />
-    <End Role="Candidate" Type="DbModel.Store.CandidateSet" Multiplicity="1" />
-    <ReferentialConstraint>
-      <Principal Role="Candidate">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="Voter">
-        <PropertyRef Name="Candidate_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
+  <EntityType Name="VoterCandidate">
+    <Key>
+      <PropertyRef Name="Voters_Id" />
+      <PropertyRef Name="Candidates_Id" />
+    </Key>
+    <Property Name="Voters_Id" Type="int" Nullable="false" />
+    <Property Name="Candidates_Id" Type="int" Nullable="false" />
+  </EntityType>
   <Association Name="PartyCandidate">
     <End Role="Party" Type="DbModel.Store.PartySet" Multiplicity="1" />
     <End Role="Candidate" Type="DbModel.Store.CandidateSet" Multiplicity="*" />
@@ -68,6 +69,30 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <Association Name="FK_VoterCandidate_Voter">
+    <End Role="Voter" Type="DbModel.Store.VoterSet" Multiplicity="1" />
+    <End Role="VoterCandidate" Type="DbModel.Store.VoterCandidate" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Voter">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="VoterCandidate">
+        <PropertyRef Name="Voters_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_VoterCandidate_Candidate">
+    <End Role="VoterCandidate" Type="DbModel.Store.VoterCandidate" Multiplicity="*" />
+    <End Role="Candidate" Type="DbModel.Store.CandidateSet" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Candidate">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="VoterCandidate">
+        <PropertyRef Name="Candidates_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -76,12 +101,12 @@
           <EntitySet Name="CandidateSet" EntityType="DbModel.Candidate" />
           <EntitySet Name="PartySet" EntityType="DbModel.Party" />
           <EntitySet Name="VoterSet" EntityType="DbModel.Voter" />
-          <AssociationSet Name="VoterCandidate" Association="DbModel.VoterCandidate">
-            <End Role="Voter" EntitySet="VoterSet" />
-            <End Role="Candidate" EntitySet="CandidateSet" />
-          </AssociationSet>
           <AssociationSet Name="PartyCandidate" Association="DbModel.PartyCandidate">
             <End Role="Party" EntitySet="PartySet" />
+            <End Role="Candidate" EntitySet="CandidateSet" />
+          </AssociationSet>
+          <AssociationSet Name="VoterCandidate" Association="DbModel.VoterCandidate">
+            <End Role="Voter" EntitySet="VoterSet" />
             <End Role="Candidate" EntitySet="CandidateSet" />
           </AssociationSet>
         </EntityContainer>
@@ -91,8 +116,8 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" />
-          <NavigationProperty Name="Voters" Relationship="DbModel.VoterCandidate" FromRole="Candidate" ToRole="Voter" />
           <NavigationProperty Name="Party" Relationship="DbModel.PartyCandidate" FromRole="Candidate" ToRole="Party" />
+          <NavigationProperty Name="Voters" Relationship="DbModel.VoterCandidate" FromRole="Candidate" ToRole="Voter" />
         </EntityType>
         <EntityType Name="Party">
           <Key>
@@ -110,15 +135,16 @@
           <Property Name="FirstName" Type="String" Nullable="false" />
           <Property Name="LastName" Type="String" Nullable="false" />
           <Property Name="Pesel" Type="String" Nullable="false" />
-          <Property Name="Voted" Type="Boolean" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
-          <NavigationProperty Name="Candidate" Relationship="DbModel.VoterCandidate" FromRole="Voter" ToRole="Candidate" />
+          <Property Name="Voted" Type="Boolean" Nullable="false" annotation:StoreGeneratedPattern="None" />
+          <NavigationProperty Name="Candidates" Relationship="DbModel.VoterCandidate" FromRole="Voter" ToRole="Candidate" />
+          <Property Name="VoteValid" Type="Boolean" Nullable="false" />
         </EntityType>
-        <Association Name="VoterCandidate">
-          <End Type="DbModel.Voter" Role="Voter" Multiplicity="*" />
-          <End Type="DbModel.Candidate" Role="Candidate" Multiplicity="1" />
-        </Association>
         <Association Name="PartyCandidate">
           <End Type="DbModel.Party" Role="Party" Multiplicity="1" />
+          <End Type="DbModel.Candidate" Role="Candidate" Multiplicity="*" />
+        </Association>
+        <Association Name="VoterCandidate">
+          <End Type="DbModel.Voter" Role="Voter" Multiplicity="*" />
           <End Type="DbModel.Candidate" Role="Candidate" Multiplicity="*" />
         </Association>
       </Schema>
@@ -151,23 +177,24 @@
           <ScalarProperty Name="LastName" ColumnName="LastName" />
           <ScalarProperty Name="Pesel" ColumnName="Pesel" />
           <ScalarProperty Name="Voted" ColumnName="Voted" />
+          <ScalarProperty Name="VoteValid" ColumnName="VoteValid" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <AssociationSetMapping Name="VoterCandidate" TypeName="DbModel.VoterCandidate" StoreEntitySet="VoterSet">
-      <EndProperty Name="Candidate">
-        <ScalarProperty Name="Id" ColumnName="Candidate_Id" />
-      </EndProperty>
-      <EndProperty Name="Voter">
-        <ScalarProperty Name="Id" ColumnName="Id" />
-      </EndProperty>
-    </AssociationSetMapping>
     <AssociationSetMapping Name="PartyCandidate" TypeName="DbModel.PartyCandidate" StoreEntitySet="CandidateSet">
       <EndProperty Name="Party">
         <ScalarProperty Name="Id" ColumnName="Party_Id" />
       </EndProperty>
       <EndProperty Name="Candidate">
         <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="VoterCandidate" TypeName="DbModel.VoterCandidate" StoreEntitySet="VoterCandidate">
+      <EndProperty Name="Voter">
+        <ScalarProperty Name="Id" ColumnName="Voters_Id" />
+      </EndProperty>
+      <EndProperty Name="Candidate">
+        <ScalarProperty Name="Id" ColumnName="Candidates_Id" />
       </EndProperty>
     </AssociationSetMapping>
   </EntityContainerMapping>

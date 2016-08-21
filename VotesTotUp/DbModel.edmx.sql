@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/19/2016 23:14:57
+-- Date Created: 08/20/2016 15:43:23
 -- Generated from EDMX file: C:\Users\Rafal\Documents\Visual Studio 2015\Projects\VotesTotUp\VotesTotUp\DbModel.edmx
 -- --------------------------------------------------
 
@@ -17,11 +17,14 @@ GO
 -- Dropping existing FOREIGN KEY constraints
 -- --------------------------------------------------
 
-IF OBJECT_ID(N'[dbo].[FK_VoterCandidate]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[VoterSet] DROP CONSTRAINT [FK_VoterCandidate];
-GO
 IF OBJECT_ID(N'[dbo].[FK_PartyCandidate]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[CandidateSet] DROP CONSTRAINT [FK_PartyCandidate];
+GO
+IF OBJECT_ID(N'[dbo].[FK_VoterCandidate_Voter]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[VoterCandidate] DROP CONSTRAINT [FK_VoterCandidate_Voter];
+GO
+IF OBJECT_ID(N'[dbo].[FK_VoterCandidate_Candidate]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[VoterCandidate] DROP CONSTRAINT [FK_VoterCandidate_Candidate];
 GO
 
 -- --------------------------------------------------
@@ -36,6 +39,9 @@ IF OBJECT_ID(N'[dbo].[PartySet]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[VoterSet]', 'U') IS NOT NULL
     DROP TABLE [dbo].[VoterSet];
+GO
+IF OBJECT_ID(N'[dbo].[VoterCandidate]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[VoterCandidate];
 GO
 
 -- --------------------------------------------------
@@ -64,7 +70,14 @@ CREATE TABLE [dbo].[VoterSet] (
     [LastName] nvarchar(max)  NOT NULL,
     [Pesel] nvarchar(max)  NOT NULL,
     [Voted] bit  NOT NULL,
-    [Candidate_Id] int  NOT NULL
+    [VoteValid] bit  NOT NULL
+);
+GO
+
+-- Creating table 'VoterCandidate'
+CREATE TABLE [dbo].[VoterCandidate] (
+    [Voters_Id] int  NOT NULL,
+    [Candidates_Id] int  NOT NULL
 );
 GO
 
@@ -90,24 +103,15 @@ ADD CONSTRAINT [PK_VoterSet]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
+-- Creating primary key on [Voters_Id], [Candidates_Id] in table 'VoterCandidate'
+ALTER TABLE [dbo].[VoterCandidate]
+ADD CONSTRAINT [PK_VoterCandidate]
+    PRIMARY KEY CLUSTERED ([Voters_Id], [Candidates_Id] ASC);
+GO
+
 -- --------------------------------------------------
 -- Creating all FOREIGN KEY constraints
 -- --------------------------------------------------
-
--- Creating foreign key on [Candidate_Id] in table 'VoterSet'
-ALTER TABLE [dbo].[VoterSet]
-ADD CONSTRAINT [FK_VoterCandidate]
-    FOREIGN KEY ([Candidate_Id])
-    REFERENCES [dbo].[CandidateSet]
-        ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
-GO
-
--- Creating non-clustered index for FOREIGN KEY 'FK_VoterCandidate'
-CREATE INDEX [IX_FK_VoterCandidate]
-ON [dbo].[VoterSet]
-    ([Candidate_Id]);
-GO
 
 -- Creating foreign key on [Party_Id] in table 'CandidateSet'
 ALTER TABLE [dbo].[CandidateSet]
@@ -122,6 +126,30 @@ GO
 CREATE INDEX [IX_FK_PartyCandidate]
 ON [dbo].[CandidateSet]
     ([Party_Id]);
+GO
+
+-- Creating foreign key on [Voters_Id] in table 'VoterCandidate'
+ALTER TABLE [dbo].[VoterCandidate]
+ADD CONSTRAINT [FK_VoterCandidate_Voter]
+    FOREIGN KEY ([Voters_Id])
+    REFERENCES [dbo].[VoterSet]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating foreign key on [Candidates_Id] in table 'VoterCandidate'
+ALTER TABLE [dbo].[VoterCandidate]
+ADD CONSTRAINT [FK_VoterCandidate_Candidate]
+    FOREIGN KEY ([Candidates_Id])
+    REFERENCES [dbo].[CandidateSet]
+        ([Id])
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_VoterCandidate_Candidate'
+CREATE INDEX [IX_FK_VoterCandidate_Candidate]
+ON [dbo].[VoterCandidate]
+    ([Candidates_Id]);
 GO
 
 -- --------------------------------------------------

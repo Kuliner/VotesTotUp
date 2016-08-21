@@ -1,4 +1,6 @@
-﻿using VotesTotUp.Data.Services;
+﻿using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Infrastructure;
+using VotesTotUp.Data.Database.Services;
 
 namespace VotesTotUp.Managers
 {
@@ -8,15 +10,19 @@ namespace VotesTotUp.Managers
 
         private static DatabaseManager _instance;
 
+        private DbModelContainer _dbContext;
+
         #endregion Fields
 
         #region Constructors
 
         private DatabaseManager()
         {
-            Party = new PartyService();
-            Voter = new VoterService();
-            Candidate = new CandidateService();
+            _dbContext = new DbModelContainer();
+       
+            Party = new PartyService(_dbContext);
+            Voter = new VoterService(_dbContext);
+            Candidate = new CandidateService(_dbContext);
         }
 
         #endregion Constructors

@@ -10,7 +10,7 @@ namespace VotesTotUp
     {
         #region Methods
 
-        internal static void Init(ContentControl windowContent)
+        internal async static void InitAsync(ContentControl windowContent)
         {
             Database.SetInitializer<DbModelContainer>(new CreateDatabaseIfNotExists<DbModelContainer>());
             Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
@@ -18,7 +18,7 @@ namespace VotesTotUp
             LogManager.Instance.LogInfo("Application is starting.");
             ViewManager.Instance.Init(windowContent);
 
-            CurrentSessionManager.Instance.Init();
+            await CurrentSessionManager.Instance.InitAsync();
         }
 
         #endregion Methods

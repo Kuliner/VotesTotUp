@@ -5,11 +5,11 @@ namespace VotesTotUp.Views
     /// <summary>
     /// Interaction logic for CalculatorView.xaml
     /// </summary>
-    public partial class CalculatorView : ContentControl
+    public partial class VoterView : ContentControl
     {
         #region Constructors
 
-        public CalculatorView()
+        public VoterView()
         {
             InitializeComponent();
         }

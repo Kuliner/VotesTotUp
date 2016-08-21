@@ -84,6 +84,14 @@
                 VerticalAlignment="Bottom"
                 Command="{Binding LoginCommand}"
                 Content="Login" />
-
+        <Button x:Name="button1"
+                Grid.Row="2"
+                Width="75"
+                Height="20"
+                Margin="0,0,10,10"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Command="{Binding DebugCommand}"
+                Content="Debug" />
     </Grid>
 </ContentControl>

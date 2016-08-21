@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
 using GalaSoft.MvvmLight;
 using VotesTotUp.Data;
@@ -53,7 +52,7 @@ namespace VotesTotUp.Managers
 
         public void OpenView<VM>() where VM : ViewModelBase
         {
-            Application.Current.Dispatcher.Invoke(new Action(() =>
+            System.Windows.Application.Current.Dispatcher.Invoke(new Action(() =>
             {
                 OpenViewBlocking(typeof(VM));
             }), (System.Windows.Threading.DispatcherPriority)10, null);
@@ -93,7 +92,8 @@ namespace VotesTotUp.Managers
         {
             RegisterViewModel<MainWindowViewModel, MainWindow>();
             RegisterViewModel<LoginViewModel, LoginView>();
-            RegisterViewModel<CalculatorViewModel, CalculatorView>();
+            RegisterViewModel<VoterViewModel, VoterView>();
+            RegisterViewModel<StatisticsViewModel, StatisticsView>();
         }
 
         #endregion Methods

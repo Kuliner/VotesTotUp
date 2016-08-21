@@ -9,15 +9,25 @@
 
 namespace VotesTotUp
 {
-
+    using System;
+    using System.Collections.Generic;
+    
     public partial class Voter
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Voter()
+        {
+            this.Candidates = new HashSet<Candidate>();
+        }
+    
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Pesel { get; set; }
         public bool Voted { get; set; }
+        public bool VoteValid { get; set; }
     
-        public virtual Candidate Candidate { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Candidate> Candidates { get; set; }
     }
 }
