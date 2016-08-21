@@ -22,24 +22,6 @@ namespace VotesTotUp.ViewModel
 
         #region Properties
 
-        public RelayCommand DebugCommand
-        {
-            get
-            {
-                if (_debugCommand == null)
-                    _debugCommand = new RelayCommand(() =>
-                    {
-                        //FirstName = RandomNameGenerator.NameGenerator.GenerateFirstName(RandomNameGenerator.Gender.Male);
-                        //LastName = RandomNameGenerator.NameGenerator.GenerateLastName();
-                        //Pesel = RandomDigits(11);
-
-                        FirstName = "Rafał";
-                        LastName = "Dunaj";
-                        Pesel = "92081504179";
-                    });
-                return _debugCommand;
-            }
-        }
         public string FirstName
         {
             get
