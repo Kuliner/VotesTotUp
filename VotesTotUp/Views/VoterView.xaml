@@ -1,0 +1,74 @@
+﻿<ContentControl x:Class="VotesTotUp.Views.VoterView"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:converters="clr-namespace:VotesTotUp.Data.Helpers"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:local="clr-namespace:VotesTotUp.Views"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                Width="405"
+                Height="325"
+                mc:Ignorable="d">
+    <Grid Background="White">
+        <Grid.Resources>
+            <converters:InvertBoolConverter x:Key="boolInverter" />
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="11*" />
+            <RowDefinition Height="2*" />
+        </Grid.RowDefinitions>
+        <ListView x:Name="listView"
+                  Grid.Row="1"
+                  Margin="10"
+                  IsEnabled="{Binding Voted,
+                                      Converter={StaticResource boolInverter}}"
+                  IsSynchronizedWithCurrentItem="True"
+                  ItemsSource="{Binding Candidates}">
+            <ListView.View>
+                <GridView>
+
+                    <GridViewColumn Width="120"
+                                    DisplayMemberBinding="{Binding Name}"
+                                    Header="Name" />
+                    <GridViewColumn Width="120"
+                                    DisplayMemberBinding="{Binding Age}"
+                                    Header="Party" />
+                    <GridViewColumn Width="50" Header="Vote">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding Vote, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button x:Name="button"
+                Grid.Row="2"
+                Width="75"
+                Height="20"
+                Margin="0,0,10,13"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Command="{Binding LogoutCommand}"
+                Content="Logout" />
+        <Button x:Name="button1"
+                Grid.Row="2"
+                Width="75"
+                Height="20"
+                Margin="10,10,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Command="{Binding VoteCommand}"
+                Content="Vote" />
+        <!--<Button x:Name="button2"
+                Grid.Row="2"
+                Width="75"
+                Margin="90,10,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Command="{Binding StatisticsCommand}"
+                Content="Statistics"
+                IsEnabled="{Binding Voted}" />-->
+    </Grid>
+</ContentControl>

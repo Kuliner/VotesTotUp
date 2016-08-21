@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using VotesTotUp.Managers;
 
 namespace VotesTotUp.Views
 {
@@ -18,7 +17,7 @@ namespace VotesTotUp.Views
 
         private void Init()
         {
-            Bootstrap.Init(this.WindowContent);
+            Bootstrap.InitAsync(this.WindowContent);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e) => Init();

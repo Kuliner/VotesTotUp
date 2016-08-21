@@ -1,0 +1,246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="DbModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="DbModelStoreContainer">
+    <EntitySet Name="CandidateSet" EntityType="DbModel.Store.CandidateSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="PartySet" EntityType="DbModel.Store.PartySet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="VoterSet" EntityType="DbModel.Store.VoterSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Statistics" EntityType="DbModel.Store.Statistics" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="VoterCandidate" EntityType="DbModel.Store.VoterCandidate" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="PartyCandidate" Association="DbModel.Store.PartyCandidate">
+      <End Role="Party" EntitySet="PartySet" />
+      <End Role="Candidate" EntitySet="CandidateSet" />
+    </AssociationSet>
+    <AssociationSet Name="FK_VoterCandidate_Voter" Association="DbModel.Store.FK_VoterCandidate_Voter">
+      <End Role="Voter" EntitySet="VoterSet" />
+      <End Role="VoterCandidate" EntitySet="VoterCandidate" />
+    </AssociationSet>
+    <AssociationSet Name="FK_VoterCandidate_Candidate" Association="DbModel.Store.FK_VoterCandidate_Candidate">
+      <End Role="Candidate" EntitySet="CandidateSet" />
+      <End Role="VoterCandidate" EntitySet="VoterCandidate" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="CandidateSet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Party_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="PartySet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
+  <EntityType Name="VoterSet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FirstName" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="LastName" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Pesel" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Voted" Type="bit" Nullable="false" />
+    <Property Name="VoteValid" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Statistics">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BlockedAttempts" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="VoterCandidate">
+    <Key>
+      <PropertyRef Name="Voters_Id" />
+      <PropertyRef Name="Candidates_Id" />
+    </Key>
+    <Property Name="Voters_Id" Type="int" Nullable="false" />
+    <Property Name="Candidates_Id" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="PartyCandidate">
+    <End Role="Party" Type="DbModel.Store.PartySet" Multiplicity="1" />
+    <End Role="Candidate" Type="DbModel.Store.CandidateSet" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Party">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Candidate">
+        <PropertyRef Name="Party_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_VoterCandidate_Voter">
+    <End Role="Voter" Type="DbModel.Store.VoterSet" Multiplicity="1" />
+    <End Role="VoterCandidate" Type="DbModel.Store.VoterCandidate" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Voter">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="VoterCandidate">
+        <PropertyRef Name="Voters_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_VoterCandidate_Candidate">
+    <End Role="VoterCandidate" Type="DbModel.Store.VoterCandidate" Multiplicity="*" />
+    <End Role="Candidate" Type="DbModel.Store.CandidateSet" Multiplicity="1" />
+    <ReferentialConstraint>
+      <Principal Role="Candidate">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="VoterCandidate">
+        <PropertyRef Name="Candidates_Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="DbModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="DbModelContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CandidateSet" EntityType="DbModel.Candidate" />
+          <EntitySet Name="PartySet" EntityType="DbModel.Party" />
+          <EntitySet Name="VoterSet" EntityType="DbModel.Voter" />
+          <AssociationSet Name="PartyCandidate" Association="DbModel.PartyCandidate">
+            <End Role="Party" EntitySet="PartySet" />
+            <End Role="Candidate" EntitySet="CandidateSet" />
+          </AssociationSet>
+          <AssociationSet Name="VoterCandidate" Association="DbModel.VoterCandidate">
+            <End Role="Voter" EntitySet="VoterSet" />
+            <End Role="Candidate" EntitySet="CandidateSet" />
+          </AssociationSet>
+          <EntitySet Name="Statistics" EntityType="DbModel.Statistics" />
+        </EntityContainer>
+        <EntityType Name="Candidate">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" />
+          <NavigationProperty Name="Party" Relationship="DbModel.PartyCandidate" FromRole="Candidate" ToRole="Party" />
+          <NavigationProperty Name="Voters" Relationship="DbModel.VoterCandidate" FromRole="Candidate" ToRole="Voter" />
+        </EntityType>
+        <EntityType Name="Party">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" />
+          <NavigationProperty Name="Candidates" Relationship="DbModel.PartyCandidate" FromRole="Party" ToRole="Candidate" />
+        </EntityType>
+        <EntityType Name="Voter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" Nullable="false" />
+          <Property Name="LastName" Type="String" Nullable="false" />
+          <Property Name="Pesel" Type="String" Nullable="false" />
+          <Property Name="Voted" Type="Boolean" Nullable="false" annotation:StoreGeneratedPattern="None" />
+          <NavigationProperty Name="Candidates" Relationship="DbModel.VoterCandidate" FromRole="Voter" ToRole="Candidate" />
+          <Property Name="VoteValid" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <Association Name="PartyCandidate">
+          <End Type="DbModel.Party" Role="Party" Multiplicity="1" />
+          <End Type="DbModel.Candidate" Role="Candidate" Multiplicity="*" />
+        </Association>
+        <Association Name="VoterCandidate">
+          <End Type="DbModel.Voter" Role="Voter" Multiplicity="*" />
+          <End Type="DbModel.Candidate" Role="Candidate" Multiplicity="*" />
+        </Association>
+        <EntityType Name="Statistics">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BlockedAttempts" Type="Int32" Nullable="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="DbModelStoreContainer" CdmEntityContainer="DbModelContainer">
+    <EntitySetMapping Name="CandidateSet">
+      <EntityTypeMapping TypeName="IsTypeOf(DbModel.Candidate)">
+        <MappingFragment StoreEntitySet="CandidateSet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PartySet">
+      <EntityTypeMapping TypeName="IsTypeOf(DbModel.Party)">
+        <MappingFragment StoreEntitySet="PartySet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="VoterSet">
+      <EntityTypeMapping TypeName="IsTypeOf(DbModel.Voter)">
+        <MappingFragment StoreEntitySet="VoterSet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+          <ScalarProperty Name="LastName" ColumnName="LastName" />
+          <ScalarProperty Name="Pesel" ColumnName="Pesel" />
+          <ScalarProperty Name="Voted" ColumnName="Voted" />
+          <ScalarProperty Name="VoteValid" ColumnName="VoteValid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Statistics">
+      <EntityTypeMapping TypeName="IsTypeOf(DbModel.Statistics)">
+        <MappingFragment StoreEntitySet="Statistics">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="BlockedAttempts" ColumnName="BlockedAttempts" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="PartyCandidate" TypeName="DbModel.PartyCandidate" StoreEntitySet="CandidateSet">
+      <EndProperty Name="Party">
+        <ScalarProperty Name="Id" ColumnName="Party_Id" />
+      </EndProperty>
+      <EndProperty Name="Candidate">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+    <AssociationSetMapping Name="VoterCandidate" TypeName="DbModel.VoterCandidate" StoreEntitySet="VoterCandidate">
+      <EndProperty Name="Voter">
+        <ScalarProperty Name="Id" ColumnName="Voters_Id" />
+      </EndProperty>
+      <EndProperty Name="Candidate">
+        <ScalarProperty Name="Id" ColumnName="Candidates_Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

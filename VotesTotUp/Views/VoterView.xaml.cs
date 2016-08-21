@@ -3,13 +3,13 @@
 namespace VotesTotUp.Views
 {
     /// <summary>
-    /// Interaction logic for LoginView.xaml
+    /// Interaction logic for CalculatorView.xaml
     /// </summary>
-    public partial class LoginView : ContentControl
+    public partial class VoterView : ContentControl
     {
         #region Constructors
 
-        public LoginView()
+        public VoterView()
         {
             InitializeComponent();
         }
