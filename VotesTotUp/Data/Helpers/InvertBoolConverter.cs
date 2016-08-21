@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace VotesTotUp.Data.Helpers
@@ -11,6 +7,8 @@ namespace VotesTotUp.Data.Helpers
     [ValueConversion(typeof(bool), typeof(bool))]
     public class InvertBoolConverter : IValueConverter
     {
+        #region Methods
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool booleanValue = (bool)value;
@@ -22,5 +20,7 @@ namespace VotesTotUp.Data.Helpers
             bool booleanValue = (bool)value;
             return !booleanValue;
         }
+
+        #endregion Methods
     }
 }

@@ -1,6 +1,5 @@
-﻿using System.Data.Entity.Core.Objects;
-using System.Data.Entity.Infrastructure;
-using VotesTotUp.Data.Database.Services;
+﻿using VotesTotUp.Data.Database.Services;
+using VotesTotUp.Data.Database.Statistic;
 
 namespace VotesTotUp.Managers
 {
@@ -19,10 +18,11 @@ namespace VotesTotUp.Managers
         private DatabaseManager()
         {
             _dbContext = new DbModelContainer();
-       
+
             Party = new PartyService(_dbContext);
             Voter = new VoterService(_dbContext);
             Candidate = new CandidateService(_dbContext);
+            Statistic = new StatisticService(_dbContext);
         }
 
         #endregion Constructors
@@ -43,6 +43,7 @@ namespace VotesTotUp.Managers
 
         public CandidateService Candidate { get; set; }
         public PartyService Party { get; set; }
+        public StatisticService Statistic { get; set; }
         public VoterService Voter { get; set; }
 
         #endregion Properties

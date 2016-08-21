@@ -9,6 +9,7 @@
     <EntitySet Name="CandidateSet" EntityType="DbModel.Store.CandidateSet" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="PartySet" EntityType="DbModel.Store.PartySet" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="VoterSet" EntityType="DbModel.Store.VoterSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Statistics" EntityType="DbModel.Store.Statistics" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="VoterCandidate" EntityType="DbModel.Store.VoterCandidate" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="PartyCandidate" Association="DbModel.Store.PartyCandidate">
       <End Role="Party" EntitySet="PartySet" />
@@ -48,6 +49,13 @@
     <Property Name="Pesel" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Voted" Type="bit" Nullable="false" />
     <Property Name="VoteValid" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Statistics">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BlockedAttempts" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="VoterCandidate">
     <Key>
@@ -109,6 +117,7 @@
             <End Role="Voter" EntitySet="VoterSet" />
             <End Role="Candidate" EntitySet="CandidateSet" />
           </AssociationSet>
+          <EntitySet Name="Statistics" EntityType="DbModel.Statistics" />
         </EntityContainer>
         <EntityType Name="Candidate">
           <Key>
@@ -147,6 +156,13 @@
           <End Type="DbModel.Voter" Role="Voter" Multiplicity="*" />
           <End Type="DbModel.Candidate" Role="Candidate" Multiplicity="*" />
         </Association>
+        <EntityType Name="Statistics">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BlockedAttempts" Type="Int32" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -178,6 +194,14 @@
           <ScalarProperty Name="Pesel" ColumnName="Pesel" />
           <ScalarProperty Name="Voted" ColumnName="Voted" />
           <ScalarProperty Name="VoteValid" ColumnName="VoteValid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Statistics">
+      <EntityTypeMapping TypeName="IsTypeOf(DbModel.Statistics)">
+        <MappingFragment StoreEntitySet="Statistics">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="BlockedAttempts" ColumnName="BlockedAttempts" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

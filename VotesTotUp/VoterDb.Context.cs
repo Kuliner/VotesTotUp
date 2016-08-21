@@ -28,5 +28,6 @@ namespace VotesTotUp
         public virtual DbSet<Candidate> CandidateSet { get; set; }
         public virtual DbSet<Party> PartySet { get; set; }
         public virtual DbSet<Voter> VoterSet { get; set; }
+        public virtual DbSet<Statistics> Statistics { get; set; }
     }
 }

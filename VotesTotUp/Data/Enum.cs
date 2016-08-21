@@ -4,6 +4,11 @@
     {
         #region Enums
 
+        public enum ExportType
+        {
+            Pdf, Csv
+        }
+
         public enum Result
         {
             DoesntExist,

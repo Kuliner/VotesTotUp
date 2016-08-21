@@ -5,10 +5,14 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
+using DoddleReport;
+using DoddleReport.Writers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using VotesTotUp.Data;
 using VotesTotUp.Data.Helpers;
 using VotesTotUp.ViewModel;
+using static VotesTotUp.Data.Enum;
 
 namespace VotesTotUp.Managers
 {
@@ -19,7 +23,10 @@ namespace VotesTotUp.Managers
         private const string _blockedUrl = "http://webtask.future-processing.com:8069/blocked";
         private const string _candidatesUrl = "http://webtask.future-processing.com:8069/candidates";
         private static CurrentSessionManager _instance;
+        private int _blockedAttempt;
         private List<string> _blockedPesels = new List<string>();
+        private System.Timers.Timer _blockRefresher = new System.Timers.Timer();
+
         #endregion Fields
 
         #region Constructors
@@ -27,6 +34,10 @@ namespace VotesTotUp.Managers
         private CurrentSessionManager()
         {
             Encryptor = new Encryption();
+            _blockRefresher.AutoReset = false;
+            _blockRefresher.Interval = 1000;
+            _blockRefresher.Elapsed += _blockRefresher_ElapsedAsync;
+            _blockRefresher.Start();
         }
 
         #endregion Constructors
@@ -44,25 +55,61 @@ namespace VotesTotUp.Managers
         }
 
         public Voter CurrentlyLoggedVoter { get; set; }
+
         public Encryption Encryptor { get; set; }
 
         #endregion Properties
 
         #region Methods
 
+        public void Export(List<CandidateControl> cands, List<PartyControl> parts, string path, ExportType type)
+        {
+            try
+            {
+                using (var fileStream = File.Create($"{path}\\Candidates.{type.ToString()}"))
+                {
+                    Report candReport = PrepCandReport(cands);
+
+                    if (type == ExportType.Pdf)
+                    {
+                        var writer = new DoddleReport.iTextSharp.PdfReportWriter();
+                        writer.WriteReport(candReport, fileStream);
+                    }
+                    else
+                    {
+                        var writer = new DoddleReport.Writers.DelimitedTextReportWriter();
+                        DelimitedTextReportWriter.DefaultDelimiter = ",";
+                        writer.WriteReport(candReport, fileStream);
+                    }
+                }
+                using (var fileStream = File.Create($"{path}\\Parties.{type.ToString()}"))
+                {
+                    Report partiesReport = PrepPartyReport(parts);
+
+                    if (type == ExportType.Pdf)
+                    {
+                        var writer = new DoddleReport.iTextSharp.PdfReportWriter();
+                        writer.WriteReport(partiesReport, fileStream);
+                    }
+                    else
+                    {
+                        var writer = new DoddleReport.Writers.DelimitedTextReportWriter();
+                        DelimitedTextReportWriter.DefaultDelimiter = ",";
+                        writer.WriteReport(partiesReport, fileStream);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
         public async Task InitAsync()
         {
             try
             {
-                JToken candidates = await GetJsonCandidatesAsync();
-                JToken blocked = await GetJsonBlockedAsync();
-
-                foreach (var person in blocked)
-                {
-                    _blockedPesels.Add(Encryptor.Hash(person.Value<string>("pesel")));
-                }
-
-                PopulateDatabase(candidates);
+                await GetBlockedVotersAsync();
+                await PopulateDatabaseAsync();
 
                 ViewManager.Instance.OpenView<LoginViewModel>();
             }
@@ -76,7 +123,11 @@ namespace VotesTotUp.Managers
         public void LoginVoter(Voter voter, string pesel)
         {
             if (!CheckVotersPrivilege(voter, pesel))
+            {
+                _blockedAttempt++;
+                DatabaseManager.Instance.Statistic.Update(_blockedAttempt);
                 return;
+            }
 
             CurrentlyLoggedVoter = voter;
             if (!CurrentlyLoggedVoter.Voted)
@@ -85,9 +136,46 @@ namespace VotesTotUp.Managers
                 ViewManager.Instance.OpenView<StatisticsViewModel>();
         }
 
+        public void LogOut()
+        {
+            CurrentlyLoggedVoter = null;
+            ViewManager.Instance.OpenView<LoginViewModel>();
+        }
+
+        private static Report PrepCandReport(List<CandidateControl> cands)
+        {
+            var voters = DatabaseManager.Instance.Voter.Get();
+            Report candReport = new Report(cands.ToReportSource());
+
+            var valid = voters.Count(x => x.Voted && x.VoteValid);
+            var invalid = voters.Count(x => x.Voted && !x.VoteValid);
+
+            candReport.TextFields.Header = $"Votes valid/invalid - {valid}/{invalid} " + Environment.NewLine + $"Blocked attempts {DatabaseManager.Instance.Statistic.Get()}" + Environment.NewLine;
+            candReport.TextFields.Title = "Candidates";
+            candReport.DataFields["Vote"].Hidden = true;
+            candReport.DataFields["InvalidVotes"].Hidden = true;
+            candReport.DataFields["IsInDesignMode"].Hidden = true;
+            return candReport;
+        }
+
+        private static Report PrepPartyReport(List<PartyControl> parts)
+        {
+            Report partiesReport = new Report(parts.ToReportSource());
+            partiesReport.TextFields.Title = "Parties";
+            partiesReport.DataFields["IsInDesignMode"].Hidden = true;
+            partiesReport.DataFields["InvalidVotes"].Hidden = true;
+            return partiesReport;
+        }
+
+        private async void _blockRefresher_ElapsedAsync(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            await GetBlockedVotersAsync();
+            _blockRefresher.Start();
+        }
+
         private bool CheckVotersPrivilege(Voter voter, string strpesel)
         {
-            //Check your privilege!
+            //Check your privilege
             if (_blockedPesels.Contains(voter.Pesel))
             {
                 MessageBox.Show("You're not allowed to vote", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -111,24 +199,14 @@ namespace VotesTotUp.Managers
             return true;
         }
 
-        private DateTime GetYear(int[] pesel)
+        private async Task GetBlockedVotersAsync()
         {
-            var year = 1900 + pesel[0] * 10 + pesel[1];
-            if (pesel[2] >= 2 && pesel[2] < 8)
-                year += pesel[2] / 2 * 100;
-            if (pesel[2] >= 8)
-                year -= 100;
-
-            var month = (pesel[2] % 2) * 10 + pesel[3];
-            var day = pesel[4] * 10 + pesel[5];
-
-            return new DateTime(year, month, day);
-        }
-
-        public void LogOut()
-        {
-            CurrentlyLoggedVoter = null;
-            ViewManager.Instance.OpenView<LoginViewModel>();
+            JToken blocked = await GetJsonBlockedAsync();
+            _blockedPesels.Clear();
+            foreach (var person in blocked)
+            {
+                _blockedPesels.Add(Encryptor.Hash(person.Value<string>("pesel")));
+            }
         }
 
         private async Task<JToken> GetJsonBlockedAsync()
@@ -158,34 +236,50 @@ namespace VotesTotUp.Managers
                                                  .ReadToEnd();
         }
 
-        private void PopulateDatabase(JToken candidates)
+        private DateTime GetYear(int[] pesel)
         {
-            Task.Factory.StartNew(() =>
-            {
-                var candidatesList = DatabaseManager.Instance.Candidate.Get();
-                if (candidatesList == null || candidatesList.Count != candidates.Count())
-                {
-                    foreach (var candidate in candidates)
-                    {
-                        var name = candidate.Value<string>("name");
-                        var party = candidate.Value<string>("party");
+            var year = 1900 + pesel[0] * 10 + pesel[1];
+            if (pesel[2] >= 2 && pesel[2] < 8)
+                year += pesel[2] / 2 * 100;
+            if (pesel[2] >= 8)
+                year -= 100;
 
-                        if (DatabaseManager.Instance.Party.Get(party) == null)
-                        {
-                            var partyEntity = new Party { Name = party };
-                            DatabaseManager.Instance.Party.Add(partyEntity);
-                        }
+            var month = (pesel[2] % 2) * 10 + pesel[3];
+            var day = pesel[4] * 10 + pesel[5];
 
-                        if (DatabaseManager.Instance.Candidate.Get(name) == null)
-                        {
-                            var cand = new Candidate { Name = name };
-                            var partyEntity = DatabaseManager.Instance.Party.Get(party);
+            return new DateTime(year, month, day);
+        }
 
-                            DatabaseManager.Instance.Candidate.Add(new Candidate { Name = name, Party = partyEntity });
-                        }
-                    }
-                }
-            });
+        private async Task PopulateDatabaseAsync()
+        {
+            JToken candidates = await GetJsonCandidatesAsync();
+
+            await Task.Factory.StartNew(() =>
+             {
+                 var candidatesList = DatabaseManager.Instance.Candidate.Get();
+                 if (candidatesList == null || candidatesList.Count != candidates.Count())
+                 {
+                     foreach (var candidate in candidates)
+                     {
+                         var name = candidate.Value<string>("name");
+                         var party = candidate.Value<string>("party");
+
+                         if (DatabaseManager.Instance.Party.Get(party) == null)
+                         {
+                             var partyEntity = new Party { Name = party };
+                             DatabaseManager.Instance.Party.Add(partyEntity);
+                         }
+
+                         if (DatabaseManager.Instance.Candidate.Get(name) == null)
+                         {
+                             var cand = new Candidate { Name = name };
+                             var partyEntity = DatabaseManager.Instance.Party.Get(party);
+
+                             DatabaseManager.Instance.Candidate.Add(new Candidate { Name = name, Party = partyEntity });
+                         }
+                     }
+                 }
+             });
         }
 
         #endregion Methods

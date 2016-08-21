@@ -1,6 +1,4 @@
-﻿using GalaSoft.MvvmLight;
-
-namespace VotesTotUp.Data
+﻿namespace VotesTotUp.Data
 {
     public class CandidateControl : ControlBase
     {
@@ -8,11 +6,11 @@ namespace VotesTotUp.Data
 
         private string _party;
         private bool _vote;
+
         #endregion Fields
 
         #region Properties
 
- 
         public string Party
         {
             get
@@ -39,7 +37,7 @@ namespace VotesTotUp.Data
                 RaisePropertyChanged();
             }
         }
-     
+
         #endregion Properties
     }
 }

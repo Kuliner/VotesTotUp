@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 08/20/2016 15:43:23
+-- Date Created: 08/21/2016 16:57:08
 -- Generated from EDMX file: C:\Users\Rafal\Documents\Visual Studio 2015\Projects\VotesTotUp\VotesTotUp\DbModel.edmx
 -- --------------------------------------------------
 
@@ -74,6 +74,13 @@ CREATE TABLE [dbo].[VoterSet] (
 );
 GO
 
+-- Creating table 'Statistics'
+CREATE TABLE [dbo].[Statistics] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [BlockedAttempts] int  NOT NULL
+);
+GO
+
 -- Creating table 'VoterCandidate'
 CREATE TABLE [dbo].[VoterCandidate] (
     [Voters_Id] int  NOT NULL,
@@ -100,6 +107,12 @@ GO
 -- Creating primary key on [Id] in table 'VoterSet'
 ALTER TABLE [dbo].[VoterSet]
 ADD CONSTRAINT [PK_VoterSet]
+    PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+-- Creating primary key on [Id] in table 'Statistics'
+ALTER TABLE [dbo].[Statistics]
+ADD CONSTRAINT [PK_Statistics]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 

@@ -42,7 +42,6 @@
             </chart:ClusteredColumnChart.Series>
         </chart:ClusteredColumnChart>
 
-
         <ListView x:Name="listView"
                   Grid.Row="1"
                   Margin="10"
@@ -51,15 +50,12 @@
             <ListView.View>
                 <GridView>
 
-                    <GridViewColumn Width="120"
+                    <GridViewColumn Width="200"
                                     DisplayMemberBinding="{Binding Name}"
                                     Header="Name" />
-                    <GridViewColumn Width="60"
+                    <GridViewColumn Width="100"
                                     DisplayMemberBinding="{Binding Votes}"
                                     Header="Votes" />
-                    <GridViewColumn Width="100"
-                                    DisplayMemberBinding="{Binding InvalidVotes}"
-                                    Header="Invalid votes" />
                 </GridView>
             </ListView.View>
         </ListView>
@@ -74,11 +70,27 @@
         <Button Grid.Row="2"
                 Width="110"
                 Height="30"
-                Margin="130,10,0,0"
+                Margin="125,10,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Command="{Binding ToggleDataCommand}"
                 Content="Party / Candidates" />
+        <Button Grid.Row="2"
+                Width="110"
+                Height="30"
+                Margin="240,10,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Command="{Binding ExportToCsvCommand}"
+                Content="Export to csv" />
+        <Button Grid.Row="2"
+                Width="110"
+                Height="30"
+                Margin="355,10,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Command="{Binding ExportToPdfCommand}"
+                Content="Export to pdf" />
         <Button x:Name="button"
                 Grid.Row="2"
                 Width="90"

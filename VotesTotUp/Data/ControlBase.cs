@@ -1,17 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 
 namespace VotesTotUp.Data
 {
     public class ControlBase : ViewModelBase
     {
+        #region Fields
+
+        private long _invalidVotes;
         private string _name;
         private long _votes;
 
+        #endregion Fields
+
+        #region Properties
+
+        public long InvalidVotes
+        {
+            get
+            {
+                return _invalidVotes;
+            }
+
+            set
+            {
+                _invalidVotes = value;
+            }
+        }
         public virtual string Name
         {
             get
@@ -38,20 +52,6 @@ namespace VotesTotUp.Data
             }
         }
 
-        public long InvalidVotes
-        {
-            get
-            {
-                return _invalidVotes;
-            }
-
-            set
-            {
-                _invalidVotes = value;
-            }
-        }
-
-        private long _invalidVotes;
-
+        #endregion Properties
     }
 }
