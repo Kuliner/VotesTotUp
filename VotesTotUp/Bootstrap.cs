@@ -16,7 +16,9 @@ namespace VotesTotUp
             string executable = System.Reflection.Assembly.GetExecutingAssembly().Location;
             string path = (System.IO.Path.GetDirectoryName(executable));
 
-            AppDomain.CurrentDomain.SetData("DataDirectory", path); Database.SetInitializer<DbModelContainer>(new CreateDatabaseIfNotExists<DbModelContainer>());
+            AppDomain.CurrentDomain.SetData("DataDirectory", path);
+
+            Database.SetInitializer<DbModelContainer>(new CreateDatabaseIfNotExists<DbModelContainer>());
             Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
 
             LogManager.Instance.LogInfo("Application is starting.");
