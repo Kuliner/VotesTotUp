@@ -24,6 +24,7 @@ namespace VotesTotUp
             Database.SetInitializer<DbModelContainer>(new CreateDatabaseIfNotExists<DbModelContainer>());
             Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
 
+            LogManager.Instance.Init(log4net.LogManager.GetLogger(typeof(LogManager)));
             LogManager.Instance.LogInfo("Application is starting.");
             ViewManager.ViewManager.Instance.Init(windowContent);
 

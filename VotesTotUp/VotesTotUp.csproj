@@ -193,7 +193,6 @@
     </Compile>
     <Compile Include="Managers\CurrentSessionManager.cs" />
     <Compile Include="Managers\DatabaseManager.cs" />
-    <Compile Include="Managers\LogManager.cs" />
     <Compile Include="Data\Database\Services\PartyService.cs" />
     <Compile Include="Data\Database\Services\StatisticService.cs" />
     <Compile Include="Data\Database\Services\VoterService.cs" />
@@ -319,6 +318,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\LogManager\LogManager\LogManager.csproj">
+      <Project>{39bc204e-ae43-46a3-8044-a4c08dd06dfa}</Project>
+      <Name>LogManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ViewManager\ViewManager\ViewManager\ViewManager.csproj">
       <Project>{495038DE-A9CF-4660-A718-BBC8C0F47EF5}</Project>
       <Name>ViewManager</Name>
