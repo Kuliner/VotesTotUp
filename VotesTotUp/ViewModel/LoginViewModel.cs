@@ -10,6 +10,11 @@ namespace VotesTotUp.ViewModel
 {
     public class LoginViewModel : ViewModelBase
     {
+        public LoginViewModel(CurrentSessionManager currentSessionManager, DatabaseManager databaseManager)
+        {
+            _currentSessionManager = currentSessionManager;
+            _databaseManager = databaseManager;
+        }
         #region Fields
 
         private RelayCommand _debugCommand;
@@ -17,6 +22,8 @@ namespace VotesTotUp.ViewModel
         private string _lastName;
         private RelayCommand _loginCommand;
         private string _pesel = null;
+        private CurrentSessionManager _currentSessionManager;
+        private DatabaseManager _databaseManager;
 
         #endregion Fields
 
@@ -86,13 +93,13 @@ namespace VotesTotUp.ViewModel
                 ValidateName(FirstName, LastName);
                 ValidatePesel(Pesel);
                 Result result;
-                var userInDb = DatabaseManager.Instance.Voter.Get(FirstName, LastName, Pesel, out result);
+                var userInDb = _databaseManager.Voter.Get(FirstName, LastName, Pesel, out result);
                 if (userInDb == null)
                 {
                     if (result == Result.DoesntExist)
                     {
                         var voter = new Voter { Pesel = Pesel, FirstName = FirstName, LastName = LastName, Voted = false };
-                        DatabaseManager.Instance.Voter.Add(voter);
+                        _databaseManager.Voter.Add(voter);
                     }
                     else if (result == Result.PeselInDb)
                     {
@@ -105,7 +112,7 @@ namespace VotesTotUp.ViewModel
                         return;
                     }
                 }
-                CurrentSessionManager.Instance.LoginVoter(DatabaseManager.Instance.Voter.Get(Pesel), Pesel);
+                _currentSessionManager.LoginVoter(_databaseManager.Voter.Get(Pesel), Pesel);
             }
             catch (Exception ex)
             {

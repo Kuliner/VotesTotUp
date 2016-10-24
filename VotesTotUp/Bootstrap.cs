@@ -3,7 +3,9 @@ using System.Data.Entity;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Controls;
-using ViewManager;
+using Microsoft.Practices.Unity;
+using ViewManagement;
+using VotesTotUp.Data.Helpers;
 using VotesTotUp.Managers;
 using VotesTotUp.ViewModel;
 using VotesTotUp.Views;
@@ -12,6 +14,8 @@ namespace VotesTotUp
 {
     public class Bootstrap
     {
+        private static UnityContainer _ioc;
+
         #region Methods
 
         internal async static void InitAsync(ContentControl windowContent)
@@ -24,21 +28,68 @@ namespace VotesTotUp
             Database.SetInitializer<DbModelContainer>(new CreateDatabaseIfNotExists<DbModelContainer>());
             Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
 
+            InitIoCManager();
+            InitViewManager(windowContent, null);
+            InitCurrentSessionManager();
+            InitServices();
+
             LogManager.Instance.Init(log4net.LogManager.GetLogger(typeof(LogManager)));
             LogManager.Instance.LogInfo("Application is starting.");
-            ViewManager.ViewManager.Instance.Init(windowContent);
 
-            RegisterViews();
 
-            await CurrentSessionManager.Instance.InitAsync();
+            var viewManager = _ioc.Resolve<ViewManager>();
+            viewManager.Init(windowContent);
+
+
+
+            var csm = _ioc.Resolve<CurrentSessionManager>();
+            await csm.InitAsync();
+            _ioc.RegisterInstance<CurrentSessionManager>(csm);
+
+            var db = _ioc.Resolve<DatabaseManager>();
+            _ioc.RegisterInstance<DatabaseManager>(db);
+
         }
 
-        private static void RegisterViews()
+        private static void InitServices()
         {
-            ViewManager.ViewManager.Instance.RegisterViewModel<LoginViewModel, LoginView>();
-            ViewManager.ViewManager.Instance.RegisterViewModel<MainWindowViewModel, MainWindow>();
-            ViewManager.ViewManager.Instance.RegisterViewModel<StatisticsViewModel, StatisticsView>();
-            ViewManager.ViewManager.Instance.RegisterViewModel<VoterViewModel, VoterView>();
+            _ioc.RegisterType<Encryption>(new ContainerControlledLifetimeManager());
+            _ioc.RegisterType<DbModelContainer>(new ContainerControlledLifetimeManager());
+            _ioc.RegisterType<DatabaseManager>(new ContainerControlledLifetimeManager());
+        }
+
+        private static void InitCurrentSessionManager()
+        {
+            _ioc.RegisterType<CurrentSessionManager>(new ContainerControlledLifetimeManager());
+        }
+
+        private static void RegisterViews(ViewManager viewManager)
+        {
+            viewManager.RegisterViewModel<LoginViewModel, LoginView>();
+            viewManager.RegisterViewModel<MainWindowViewModel, MainWindow>();
+            viewManager.RegisterViewModel<StatisticsViewModel, StatisticsView>();
+            viewManager.RegisterViewModel<VoterViewModel, VoterView>();
+        }
+
+        private static void InitIoCManager()
+        {
+            _ioc = new UnityContainer();
+            _ioc.RegisterInstance(_ioc);
+
+            var _iocManager = new IoCManager(_ioc);
+            _ioc.RegisterInstance<IoCManager>(_iocManager);
+        }
+
+        private static void InitViewManager(ContentControl windowContent, ContentControl popUpContent)
+        {
+            _ioc.RegisterType<ViewManager>(new ContainerControlledLifetimeManager());
+
+            var viewManager = _ioc.Resolve<ViewManager>();
+            viewManager.Init(windowContent, popUpContent);
+            _ioc.RegisterInstance<ViewManager>(viewManager);
+
+            RegisterViews(viewManager);
+
         }
 
         #endregion Methods

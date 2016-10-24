@@ -1,4 +1,4 @@
-﻿using ViewManager;
+﻿using ViewManagement;
 
 namespace VotesTotUp.Data
 {

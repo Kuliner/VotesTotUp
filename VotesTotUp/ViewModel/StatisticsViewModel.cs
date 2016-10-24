@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Forms;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using ViewManager;
+using ViewManagement;
 using VotesTotUp.Data;
 using VotesTotUp.Data.Helpers;
 using VotesTotUp.Managers;
@@ -31,12 +31,14 @@ namespace VotesTotUp.ViewModel
         private RelayCommand _toggleDataCommand;
         private RelayCommand _toggleStatisticsDisplayCommand;
         private int _votes;
+        private CurrentSessionManager _currentSessionManager;
+        private DatabaseManager _databaseManager;
 
         #endregion Fields
 
         #region Constructors
 
-        public StatisticsViewModel()
+        public StatisticsViewModel(CurrentSessionManager currentSessionManager, DatabaseManager databaseManager)
         {
             GetDataForDisplay();
             DisplayData = DataToDisplay.CandidateVotes;
@@ -45,6 +47,9 @@ namespace VotesTotUp.ViewModel
             _refreshDataTimer.Interval = 1000;
             _refreshDataTimer.Elapsed += _refreshDataTimer_Elapsed;
             _refreshDataTimer.Start();
+
+            _currentSessionManager = currentSessionManager;
+            _databaseManager = databaseManager;
         }
 
         #endregion Constructors
@@ -133,7 +138,7 @@ namespace VotesTotUp.ViewModel
                         var dialog = new System.Windows.Forms.FolderBrowserDialog();
                         System.Windows.Forms.DialogResult result = dialog.ShowDialog();
                         if (result == DialogResult.OK)
-                            CurrentSessionManager.Instance.Export(Candidates, Parties, dialog.SelectedPath, VotesTotUp.Data.Enum.ExportType.Csv);
+                            _currentSessionManager.Export(Candidates, Parties, dialog.SelectedPath, VotesTotUp.Data.Enum.ExportType.Csv);
                     });
                 }
                 return _exportToCsvCommand;
@@ -150,7 +155,7 @@ namespace VotesTotUp.ViewModel
                         var dialog = new System.Windows.Forms.FolderBrowserDialog();
                         System.Windows.Forms.DialogResult result = dialog.ShowDialog();
                         if (result == DialogResult.OK)
-                            CurrentSessionManager.Instance.Export(Candidates, Parties, dialog.SelectedPath, VotesTotUp.Data.Enum.ExportType.Pdf);
+                            _currentSessionManager.Export(Candidates, Parties, dialog.SelectedPath, VotesTotUp.Data.Enum.ExportType.Pdf);
                     });
                 }
                 return _exportToPdfCommand;
@@ -177,7 +182,7 @@ namespace VotesTotUp.ViewModel
                 if (_logoutCommand == null)
                     _logoutCommand = new RelayCommand(() =>
                     {
-                        CurrentSessionManager.Instance.LogOut();
+                        _currentSessionManager.LogOut();
                     });
                 return _logoutCommand;
             }
@@ -327,9 +332,9 @@ namespace VotesTotUp.ViewModel
         {
             try
             {
-                var candidates = DatabaseManager.Instance.Candidate.Get();
-                var parties = DatabaseManager.Instance.Party.Get();
-                var voters = DatabaseManager.Instance.Voter.Get();
+                var candidates = _databaseManager.Candidate.Get();
+                var parties = _databaseManager.Party.Get();
+                var voters = _databaseManager.Voter.Get();
                 InvalidVotes = voters.Count(x => x.Voted && x.VoteValid == false);
                 Candidates = candidates.Select(x => new CandidateControl { Name = x.Name, Party = x.Party.Name, Votes = x.Voters.Count(z => z.Voted && z.VoteValid), InvalidVotes = x.Voters.Count(y => y.Voted && y.VoteValid == false) }).ToList();
                 Parties = parties.ConvertToPartyControl();

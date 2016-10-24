@@ -5,16 +5,19 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using VotesTotUp.Data;
 using VotesTotUp.Managers;
-using ViewManager;
+using ViewManagement;
 
 namespace VotesTotUp.ViewModel
 {
     public class VoterViewModel : ViewModelBase
     {
+        private CurrentSessionManager _currentSessionManager;
+        private DatabaseManager _databaseManager;
         #region Fields
 
         private RelayCommand _logoutCommand;
         private RelayCommand _statisticsCommand;
+        private ViewManager _viewManager;
         private RelayCommand _voteCommad;
         private bool _voted;
         private Voter _voter;
@@ -23,12 +26,16 @@ namespace VotesTotUp.ViewModel
 
         #region Constructors
 
-        public VoterViewModel()
+        public VoterViewModel(CurrentSessionManager currentSessionManager, DatabaseManager databaseManager, ViewManager viewManager)
         {
-            _voter = CurrentSessionManager.Instance.CurrentlyLoggedVoter;
+            _currentSessionManager = currentSessionManager;
+            _databaseManager = databaseManager;
+            _viewManager = viewManager;
+
+            _voter = _currentSessionManager.CurrentlyLoggedVoter;
             Voted = _voter.Voted;
 
-            var candidates = DatabaseManager.Instance.Candidate.Get();
+            var candidates = _databaseManager.Candidate.Get();
             Candidates = candidates.Select(x => new CandidateControl { Name = x.Name, Party = x.Party.Name, Vote = false }).ToList();
         }
 
@@ -72,7 +79,7 @@ namespace VotesTotUp.ViewModel
                 if (_statisticsCommand == null)
                     _statisticsCommand = new RelayCommand(() =>
                     {
-                        ViewManager.ViewManager.Instance.OpenView<StatisticsViewModel>();
+                        _viewManager.OpenView<StatisticsViewModel>();
                     });
                 return _statisticsCommand;
             }
@@ -113,7 +120,7 @@ namespace VotesTotUp.ViewModel
 
         private void LogOut()
         {
-            CurrentSessionManager.Instance.LogOut();
+            _currentSessionManager.LogOut();
         }
 
         private void Vote()
@@ -133,11 +140,11 @@ namespace VotesTotUp.ViewModel
 
             foreach (var candidate in Candidates.Where(X => X.Vote == true))
             {
-                _voter.Candidates.Add(DatabaseManager.Instance.Candidate.Get(candidate.Name));
+                _voter.Candidates.Add(_databaseManager.Candidate.Get(candidate.Name));
             }
 
-            DatabaseManager.Instance.Voter.Update(_voter);
-            ViewManager.ViewManager.Instance.OpenView<StatisticsViewModel>();
+            _databaseManager.Voter.Update(_voter);
+            _viewManager.OpenView<StatisticsViewModel>();
         }
 
         #endregion Methods

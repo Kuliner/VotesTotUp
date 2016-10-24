@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+using VotesTotUp.Data.Helpers;
 using VotesTotUp.Managers;
 using static VotesTotUp.Data.Enum;
 
@@ -13,14 +14,16 @@ namespace VotesTotUp.Data.Database.Services
         #region Fields
 
         private DbModelContainer _dbContext;
+        private Encryption _encryption;
 
         #endregion Fields
 
         #region Constructors
 
-        public VoterService(DbModelContainer db)
+        public VoterService(DbModelContainer db, Encryption encryption)
         {
             _dbContext = db;
+            _encryption = encryption;
         }
 
         #endregion Constructors
@@ -34,7 +37,7 @@ namespace VotesTotUp.Data.Database.Services
                 if (entity.FirstName == null || entity.LastName == null || entity.Pesel == null)
                     throw new Exception("Name and Pesel fields must not be null");
 
-                entity.Pesel = CurrentSessionManager.Instance.Encryptor.Hash(entity.Pesel);
+                entity.Pesel = _encryption.Hash(entity.Pesel);
 
                 _dbContext.VoterSet.Add(entity);
                 _dbContext.SaveChanges();
@@ -85,7 +88,7 @@ namespace VotesTotUp.Data.Database.Services
         {
             try
             {
-                var hashPesel = CurrentSessionManager.Instance.Encryptor.Hash(pesel);
+                var hashPesel = _encryption.Hash(pesel);
 
                 var voter = _dbContext.VoterSet.FirstOrDefault(x => x.Pesel == hashPesel && x.LastName == lastName && x.FirstName == firstName);
 
@@ -117,7 +120,7 @@ namespace VotesTotUp.Data.Database.Services
         {
             try
             {
-                var hashPesel = CurrentSessionManager.Instance.Encryptor.Hash(pesel);
+                var hashPesel = _encryption.Hash(pesel);
 
                 var voter = _dbContext.VoterSet.FirstOrDefault(x => x.Pesel == hashPesel);
                 if (voter == null)

@@ -1,5 +1,6 @@
 ﻿using VotesTotUp.Data.Database.Services;
 using VotesTotUp.Data.Database.Statistic;
+using VotesTotUp.Data.Helpers;
 
 namespace VotesTotUp.Managers
 {
@@ -7,20 +8,18 @@ namespace VotesTotUp.Managers
     {
         #region Fields
 
-        private static DatabaseManager _instance;
-
         private DbModelContainer _dbContext;
 
         #endregion Fields
 
         #region Constructors
 
-        private DatabaseManager()
+        public DatabaseManager(DbModelContainer dbContext, Encryption encryption)
         {
             _dbContext = new DbModelContainer();
 
             Party = new PartyService(_dbContext);
-            Voter = new VoterService(_dbContext);
+            Voter = new VoterService(_dbContext, encryption);
             Candidate = new CandidateService(_dbContext);
             Statistic = new StatisticService(_dbContext);
         }
@@ -28,18 +27,6 @@ namespace VotesTotUp.Managers
         #endregion Constructors
 
         #region Properties
-
-        public static DatabaseManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new DatabaseManager();
-                }
-                return _instance;
-            }
-        }
 
         public CandidateService Candidate { get; set; }
         public PartyService Party { get; set; }

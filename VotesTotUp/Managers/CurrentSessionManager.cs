@@ -9,11 +9,11 @@ using DoddleReport;
 using DoddleReport.Writers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ViewManagement;
 using VotesTotUp.Data;
 using VotesTotUp.Data.Helpers;
 using VotesTotUp.ViewModel;
 using static VotesTotUp.Data.Enum;
-using ViewManager;
 
 namespace VotesTotUp.Managers
 {
@@ -23,37 +23,31 @@ namespace VotesTotUp.Managers
 
         private const string _blockedUrl = "http://webtask.future-processing.com:8069/blocked";
         private const string _candidatesUrl = "http://webtask.future-processing.com:8069/candidates";
-        private static CurrentSessionManager _instance;
         private int _blockedAttempt;
         private List<string> _blockedPesels = new List<string>();
         private System.Timers.Timer _blockRefresher = new System.Timers.Timer();
+        private ViewManager _viewManager;
+        private DatabaseManager _dataBaseManager;
 
         #endregion Fields
 
         #region Constructors
 
-        private CurrentSessionManager()
+        public CurrentSessionManager(ViewManager viewManager, DatabaseManager dataBaseManager)
         {
             Encryptor = new Encryption();
             _blockRefresher.AutoReset = false;
             _blockRefresher.Interval = 1000;
             _blockRefresher.Elapsed += _blockRefresher_ElapsedAsync;
             _blockRefresher.Start();
+
+            _viewManager = viewManager;
+            _dataBaseManager = dataBaseManager;
         }
 
         #endregion Constructors
 
         #region Properties
-
-        public static CurrentSessionManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new CurrentSessionManager();
-                return _instance;
-            }
-        }
 
         public Voter CurrentlyLoggedVoter { get; set; }
 
@@ -112,7 +106,7 @@ namespace VotesTotUp.Managers
                 await GetBlockedVotersAsync();
                 await PopulateDatabaseAsync();
 
-                ViewManager.ViewManager.Instance.OpenView<LoginViewModel>();
+                _viewManager.OpenView<LoginViewModel>();
             }
             catch (WebException wex)
             {
@@ -126,32 +120,32 @@ namespace VotesTotUp.Managers
             if (!CheckVotersPrivilege(voter, pesel))
             {
                 _blockedAttempt++;
-                DatabaseManager.Instance.Statistic.Update(_blockedAttempt);
+                _dataBaseManager.Statistic.Update(_blockedAttempt);
                 return;
             }
 
             CurrentlyLoggedVoter = voter;
             if (!CurrentlyLoggedVoter.Voted)
-                ViewManager.ViewManager.Instance.OpenView<VoterViewModel>();
+                _viewManager.OpenView<VoterViewModel>();
             else
-                ViewManager.ViewManager.Instance.OpenView<StatisticsViewModel>();
+                _viewManager.OpenView<StatisticsViewModel>();
         }
 
         public void LogOut()
         {
             CurrentlyLoggedVoter = null;
-            ViewManager.ViewManager.Instance.OpenView<LoginViewModel>();
+            _viewManager.OpenView<LoginViewModel>();
         }
 
-        private static Report PrepCandReport(List<CandidateControl> cands)
+        private Report PrepCandReport(List<CandidateControl> cands)
         {
-            var voters = DatabaseManager.Instance.Voter.Get();
+            var voters = _dataBaseManager.Voter.Get();
             Report candReport = new Report(cands.ToReportSource());
 
             var valid = voters.Count(x => x.Voted && x.VoteValid);
             var invalid = voters.Count(x => x.Voted && !x.VoteValid);
 
-            candReport.TextFields.Header = $"Votes valid/invalid - {valid}/{invalid} " + Environment.NewLine + $"Blocked attempts {DatabaseManager.Instance.Statistic.Get()}" + Environment.NewLine;
+            candReport.TextFields.Header = $"Votes valid/invalid - {valid}/{invalid} " + Environment.NewLine + $"Blocked attempts {_dataBaseManager.Statistic.Get()}" + Environment.NewLine;
             candReport.TextFields.Title = "Candidates";
             candReport.DataFields["Vote"].Hidden = true;
             candReport.DataFields["InvalidVotes"].Hidden = true;
@@ -257,7 +251,7 @@ namespace VotesTotUp.Managers
 
             await Task.Factory.StartNew(() =>
              {
-                 var candidatesList = DatabaseManager.Instance.Candidate.Get();
+                 var candidatesList = _dataBaseManager.Candidate.Get();
                  if (candidatesList == null || candidatesList.Count != candidates.Count())
                  {
                      foreach (var candidate in candidates)
@@ -265,18 +259,18 @@ namespace VotesTotUp.Managers
                          var name = candidate.Value<string>("name");
                          var party = candidate.Value<string>("party");
 
-                         if (DatabaseManager.Instance.Party.Get(party) == null)
+                         if (_dataBaseManager.Party.Get(party) == null)
                          {
                              var partyEntity = new Party { Name = party };
-                             DatabaseManager.Instance.Party.Add(partyEntity);
+                             _dataBaseManager.Party.Add(partyEntity);
                          }
 
-                         if (DatabaseManager.Instance.Candidate.Get(name) == null)
+                         if (_dataBaseManager.Candidate.Get(name) == null)
                          {
                              var cand = new Candidate { Name = name };
-                             var partyEntity = DatabaseManager.Instance.Party.Get(party);
+                             var partyEntity = _dataBaseManager.Party.Get(party);
 
-                             DatabaseManager.Instance.Candidate.Add(new Candidate { Name = name, Party = partyEntity });
+                             _dataBaseManager.Candidate.Add(new Candidate { Name = name, Party = partyEntity });
                          }
                      }
                  }
