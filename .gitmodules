@@ -4,3 +4,6 @@
 [submodule "LogManager"]
 	path = LogManager
 	url = C:/Users/Rafal/Source/Repos/LogManager
+[submodule "Managers"]
+	path = Managers
+	url = C:/Users/Rafal/Source/Repos/Managers
