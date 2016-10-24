@@ -179,7 +179,6 @@
     <Compile Include="Candidate.cs">
       <DependentUpon>VotersDbModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Data\ControlBase.cs" />
     <Compile Include="Data\CandidateControl.cs" />
     <Compile Include="Data\Helpers\PartyExtension.cs" />
     <Compile Include="Data\PartyControl.cs" />
@@ -197,8 +196,6 @@
     <Compile Include="Managers\LogManager.cs" />
     <Compile Include="Data\Database\Services\PartyService.cs" />
     <Compile Include="Data\Database\Services\StatisticService.cs" />
-    <Compile Include="Managers\ViewManager.cs" />
-    <Compile Include="Data\ViewModelConnection.cs" />
     <Compile Include="Data\Database\Services\VoterService.cs" />
     <Compile Include="Party.cs">
       <DependentUpon>VotersDbModel.tt</DependentUpon>
@@ -321,7 +318,12 @@
       <DependentUpon>DbModel.edmx</DependentUpon>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ViewManager\ViewManager\ViewManager\ViewManager.csproj">
+      <Project>{495038DE-A9CF-4660-A718-BBC8C0F47EF5}</Project>
+      <Name>ViewManager</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

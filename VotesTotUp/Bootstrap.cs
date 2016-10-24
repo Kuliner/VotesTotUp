@@ -3,7 +3,10 @@ using System.Data.Entity;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Controls;
+using ViewManager;
 using VotesTotUp.Managers;
+using VotesTotUp.ViewModel;
+using VotesTotUp.Views;
 
 namespace VotesTotUp
 {
@@ -22,9 +25,19 @@ namespace VotesTotUp
             Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
 
             LogManager.Instance.LogInfo("Application is starting.");
-            ViewManager.Instance.Init(windowContent);
+            ViewManager.ViewManager.Instance.Init(windowContent);
+
+            RegisterViews();
 
             await CurrentSessionManager.Instance.InitAsync();
+        }
+
+        private static void RegisterViews()
+        {
+            ViewManager.ViewManager.Instance.RegisterViewModel<LoginViewModel, LoginView>();
+            ViewManager.ViewManager.Instance.RegisterViewModel<MainWindowViewModel, MainWindow>();
+            ViewManager.ViewManager.Instance.RegisterViewModel<StatisticsViewModel, StatisticsView>();
+            ViewManager.ViewManager.Instance.RegisterViewModel<VoterViewModel, VoterView>();
         }
 
         #endregion Methods

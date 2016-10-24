@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Forms;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using ViewManager;
 using VotesTotUp.Data;
 using VotesTotUp.Data.Helpers;
 using VotesTotUp.Managers;

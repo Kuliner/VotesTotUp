@@ -13,6 +13,7 @@ using VotesTotUp.Data;
 using VotesTotUp.Data.Helpers;
 using VotesTotUp.ViewModel;
 using static VotesTotUp.Data.Enum;
+using ViewManager;
 
 namespace VotesTotUp.Managers
 {
@@ -111,7 +112,7 @@ namespace VotesTotUp.Managers
                 await GetBlockedVotersAsync();
                 await PopulateDatabaseAsync();
 
-                ViewManager.Instance.OpenView<LoginViewModel>();
+                ViewManager.ViewManager.Instance.OpenView<LoginViewModel>();
             }
             catch (WebException wex)
             {
@@ -131,15 +132,15 @@ namespace VotesTotUp.Managers
 
             CurrentlyLoggedVoter = voter;
             if (!CurrentlyLoggedVoter.Voted)
-                ViewManager.Instance.OpenView<VoterViewModel>();
+                ViewManager.ViewManager.Instance.OpenView<VoterViewModel>();
             else
-                ViewManager.Instance.OpenView<StatisticsViewModel>();
+                ViewManager.ViewManager.Instance.OpenView<StatisticsViewModel>();
         }
 
         public void LogOut()
         {
             CurrentlyLoggedVoter = null;
-            ViewManager.Instance.OpenView<LoginViewModel>();
+            ViewManager.ViewManager.Instance.OpenView<LoginViewModel>();
         }
 
         private static Report PrepCandReport(List<CandidateControl> cands)

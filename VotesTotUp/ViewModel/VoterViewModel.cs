@@ -5,6 +5,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using VotesTotUp.Data;
 using VotesTotUp.Managers;
+using ViewManager;
 
 namespace VotesTotUp.ViewModel
 {
@@ -71,7 +72,7 @@ namespace VotesTotUp.ViewModel
                 if (_statisticsCommand == null)
                     _statisticsCommand = new RelayCommand(() =>
                     {
-                        ViewManager.Instance.OpenView<StatisticsViewModel>();
+                        ViewManager.ViewManager.Instance.OpenView<StatisticsViewModel>();
                     });
                 return _statisticsCommand;
             }
@@ -136,7 +137,7 @@ namespace VotesTotUp.ViewModel
             }
 
             DatabaseManager.Instance.Voter.Update(_voter);
-            ViewManager.Instance.OpenView<StatisticsViewModel>();
+            ViewManager.ViewManager.Instance.OpenView<StatisticsViewModel>();
         }
 
         #endregion Methods

@@ -1,4 +1,6 @@
-﻿namespace VotesTotUp.Data
+﻿using ViewManager;
+
+namespace VotesTotUp.Data
 {
     public class CandidateControl : ControlBase
     {
