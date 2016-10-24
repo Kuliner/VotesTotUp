@@ -1,3 +1,6 @@
 [submodule "ViewManager"]
 	path = ViewManager
 	url = C:/Users/Rafal/Source/Repos/ViewManager
+[submodule "LogManager"]
+	path = LogManager
+	url = C:/Users/Rafal/Source/Repos/LogManager
