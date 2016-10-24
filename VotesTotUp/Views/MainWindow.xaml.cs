@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using GalaSoft.MvvmLight;
 
 namespace VotesTotUp.Views
 {

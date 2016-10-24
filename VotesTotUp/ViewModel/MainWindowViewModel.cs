@@ -8,8 +8,24 @@ namespace VotesTotUp.ViewModel
 
         public MainWindowViewModel()
         {
+            MessengerInstance.Register<bool>(this, payload => IsBusy = payload);
         }
 
         #endregion Constructors
+
+        private bool _isBusy = false;
+        public bool IsBusy
+        {
+            get
+            {
+                return _isBusy;
+            }
+
+            set
+            {
+                _isBusy = value;
+                RaisePropertyChanged();
+            }
+        }
     }
 }
