@@ -28,6 +28,7 @@ namespace VotesTotUp.Managers
         private System.Timers.Timer _blockRefresher = new System.Timers.Timer();
         private ViewManager _viewManager;
         private DatabaseManager _dataBaseManager;
+        private LogManager _logger;
 
         #endregion Fields
 
@@ -96,6 +97,7 @@ namespace VotesTotUp.Managers
             }
             catch (Exception ex)
             {
+                LogManager.Instance.LogError(ex.StackTrace);
             }
         }
 
