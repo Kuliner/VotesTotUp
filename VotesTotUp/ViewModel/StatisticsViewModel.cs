@@ -33,13 +33,18 @@ namespace VotesTotUp.ViewModel
         private int _votes;
         private CurrentSessionManager _currentSessionManager;
         private DatabaseManager _databaseManager;
+        private LogManager _logger;
 
         #endregion Fields
 
         #region Constructors
 
-        public StatisticsViewModel(CurrentSessionManager currentSessionManager, DatabaseManager databaseManager)
+        public StatisticsViewModel(CurrentSessionManager currentSessionManager, DatabaseManager databaseManager, LogManager logger)
         {
+            _currentSessionManager = currentSessionManager;
+            _databaseManager = databaseManager;
+            _logger = logger;
+
             GetDataForDisplay();
             DisplayData = DataToDisplay.CandidateVotes;
             Display = DisplayMode.Numbers;
@@ -48,8 +53,7 @@ namespace VotesTotUp.ViewModel
             _refreshDataTimer.Elapsed += _refreshDataTimer_Elapsed;
             _refreshDataTimer.Start();
 
-            _currentSessionManager = currentSessionManager;
-            _databaseManager = databaseManager;
+
         }
 
         #endregion Constructors
@@ -344,7 +348,7 @@ namespace VotesTotUp.ViewModel
             }
             catch (System.Exception ex)
             {
-                LogManager.Instance.LogError(ex.StackTrace);
+                _logger.LogError(ex.StackTrace);
             }
         }
 
@@ -367,7 +371,7 @@ namespace VotesTotUp.ViewModel
             }
             catch (System.Exception ex)
             {
-                LogManager.Instance.LogError(ex.StackTrace);
+                _logger.LogError(ex.StackTrace);
             }
         }
 

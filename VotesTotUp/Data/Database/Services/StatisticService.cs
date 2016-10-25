@@ -8,14 +8,16 @@ namespace VotesTotUp.Data.Database.Statistic
         #region Fields
 
         private DbModelContainer _dbContext;
+        private LogManager _logger;
 
         #endregion Fields
 
         #region Constructors
 
-        public StatisticService(DbModelContainer db)
+        public StatisticService(DbModelContainer db, LogManager logger)
         {
             _dbContext = db;
+            _logger = logger;
         }
 
         #endregion Constructors
@@ -30,7 +32,7 @@ namespace VotesTotUp.Data.Database.Statistic
             }
             catch (System.Exception ex)
             {
-                LogManager.Instance.LogError(ex.StackTrace);
+                _logger.LogError(ex.StackTrace);
                 return -1;
             }
         }
@@ -49,7 +51,7 @@ namespace VotesTotUp.Data.Database.Statistic
             }
             catch (System.Exception ex)
             {
-                LogManager.Instance.LogError(ex.StackTrace);
+                _logger.LogError(ex.StackTrace);
             }
         }
 

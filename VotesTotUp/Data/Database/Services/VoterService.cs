@@ -15,15 +15,17 @@ namespace VotesTotUp.Data.Database.Services
 
         private DbModelContainer _dbContext;
         private Encryption _encryption;
+        private LogManager _logger;
 
         #endregion Fields
 
         #region Constructors
 
-        public VoterService(DbModelContainer db, Encryption encryption)
+        public VoterService(DbModelContainer db, Encryption encryption, LogManager logger)
         {
             _dbContext = db;
             _encryption = encryption;
+            _logger = logger;
         }
 
         #endregion Constructors
@@ -46,7 +48,7 @@ namespace VotesTotUp.Data.Database.Services
             }
             catch (Exception ex)
             {
-                LogManager.Instance.LogError(ex.StackTrace);
+                _logger.LogError(ex.StackTrace);
                 return false;
             }
         }
@@ -63,7 +65,7 @@ namespace VotesTotUp.Data.Database.Services
             }
             catch (Exception ex)
             {
-                LogManager.Instance.LogError(ex.StackTrace);
+                _logger.LogError(ex.StackTrace);
                 return null;
             }
         }
@@ -79,7 +81,7 @@ namespace VotesTotUp.Data.Database.Services
             }
             catch (Exception ex)
             {
-                LogManager.Instance.LogError(ex.StackTrace);
+                _logger.LogError(ex.StackTrace);
                 return null;
             }
         }
@@ -110,7 +112,7 @@ namespace VotesTotUp.Data.Database.Services
             }
             catch (Exception ex)
             {
-                LogManager.Instance.LogError(ex.StackTrace);
+                _logger.LogError(ex.StackTrace);
                 result = Result.Error;
                 return null;
             }
@@ -132,7 +134,7 @@ namespace VotesTotUp.Data.Database.Services
             }
             catch (Exception ex)
             {
-                LogManager.Instance.LogError(ex.StackTrace);
+                _logger.LogError(ex.StackTrace);
                 return null;
             }
         }
@@ -148,7 +150,7 @@ namespace VotesTotUp.Data.Database.Services
             }
             catch (Exception ex)
             {
-                LogManager.Instance.LogError(ex.StackTrace);
+                _logger.LogError(ex.StackTrace);
                 return false;
             }
         }
@@ -167,7 +169,7 @@ namespace VotesTotUp.Data.Database.Services
             }
             catch (Exception ex)
             {
-                LogManager.Instance.LogError(ex.StackTrace);
+                _logger.LogError(ex.StackTrace);
                 return false;
             }
         }
@@ -201,7 +203,7 @@ namespace VotesTotUp.Data.Database.Services
             }
             catch (Exception ex)
             {
-                LogManager.Instance.LogError(ex.StackTrace);
+                _logger.LogError(ex.StackTrace);
                 return false;
             }
         }

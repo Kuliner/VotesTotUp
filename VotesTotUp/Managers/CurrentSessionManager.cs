@@ -34,7 +34,7 @@ namespace VotesTotUp.Managers
 
         #region Constructors
 
-        public CurrentSessionManager(ViewManager viewManager, DatabaseManager dataBaseManager)
+        public CurrentSessionManager(ViewManager viewManager, DatabaseManager dataBaseManager, LogManager logger)
         {
             Encryptor = new Encryption();
             _blockRefresher.AutoReset = false;
@@ -44,6 +44,7 @@ namespace VotesTotUp.Managers
 
             _viewManager = viewManager;
             _dataBaseManager = dataBaseManager;
+            _logger = logger;
         }
 
         #endregion Constructors
@@ -97,7 +98,7 @@ namespace VotesTotUp.Managers
             }
             catch (Exception ex)
             {
-                LogManager.Instance.LogError(ex.StackTrace);
+                _logger.LogError(ex.StackTrace);
             }
         }
 

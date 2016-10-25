@@ -5,6 +5,7 @@ using System.Threading;
 using System.Windows.Controls;
 using Microsoft.Practices.Unity;
 using ViewManagement;
+using VotesTotUp.Data.Database.Services;
 using VotesTotUp.Data.Helpers;
 using VotesTotUp.Managers;
 using VotesTotUp.ViewModel;
@@ -30,26 +31,25 @@ namespace VotesTotUp
             Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
 
             InitIoCManager();
+            InitLogger();
             InitViewManager(windowContent, null);
             InitCurrentSessionManager();
             InitServices();
 
-            LogManager.Instance.Init(log4net.LogManager.GetLogger(typeof(LogManager)));
-            LogManager.Instance.LogInfo("Application is starting.");
-
-
             var viewManager = _ioc.Resolve<ViewManager>();
             viewManager.Init(windowContent);
 
-
-
             var csm = _ioc.Resolve<CurrentSessionManager>();
             await csm.InitAsync();
-            _ioc.RegisterInstance<CurrentSessionManager>(csm);
+        }
 
-            var db = _ioc.Resolve<DatabaseManager>();
-            _ioc.RegisterInstance<DatabaseManager>(db);
+        private static void InitLogger()
+        {
+            _ioc.RegisterType<LogManager>(new ContainerControlledLifetimeManager());
 
+            var logger = _ioc.Resolve<LogManager>();
+            logger.Init(log4net.LogManager.GetLogger(typeof(LogManager)));
+            logger.LogInfo("Application is starting.");
         }
 
         private static void InitServices()
@@ -57,6 +57,10 @@ namespace VotesTotUp
             _ioc.RegisterType<Encryption>(new ContainerControlledLifetimeManager());
             _ioc.RegisterType<DbModelContainer>(new ContainerControlledLifetimeManager());
             _ioc.RegisterType<DatabaseManager>(new ContainerControlledLifetimeManager());
+            _ioc.RegisterType<CandidateService>(new ContainerControlledLifetimeManager());
+            _ioc.RegisterType<VoterService>(new ContainerControlledLifetimeManager());
+            _ioc.RegisterType<PartyService>(new ContainerControlledLifetimeManager());
+            _ioc.RegisterType<Data.Database.Statistic.StatisticService>(new ContainerControlledLifetimeManager());
         }
 
         private static void InitCurrentSessionManager()
@@ -87,10 +91,7 @@ namespace VotesTotUp
 
             var viewManager = _ioc.Resolve<ViewManager>();
             viewManager.Init(windowContent, popUpContent);
-            _ioc.RegisterInstance<ViewManager>(viewManager);
-
             RegisterViews(viewManager);
-
         }
 
         #endregion Methods

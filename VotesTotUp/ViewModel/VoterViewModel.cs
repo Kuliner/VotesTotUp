@@ -6,6 +6,7 @@ using GalaSoft.MvvmLight.Command;
 using VotesTotUp.Data;
 using VotesTotUp.Managers;
 using ViewManagement;
+using System;
 
 namespace VotesTotUp.ViewModel
 {
@@ -13,6 +14,7 @@ namespace VotesTotUp.ViewModel
     {
         private CurrentSessionManager _currentSessionManager;
         private DatabaseManager _databaseManager;
+        private LogManager _logger;
         #region Fields
 
         private RelayCommand _logoutCommand;
@@ -26,7 +28,7 @@ namespace VotesTotUp.ViewModel
 
         #region Constructors
 
-        public VoterViewModel(CurrentSessionManager currentSessionManager, DatabaseManager databaseManager, ViewManager viewManager)
+        public VoterViewModel(CurrentSessionManager currentSessionManager, DatabaseManager databaseManager, ViewManager viewManager, LogManager logger)
         {
             _currentSessionManager = currentSessionManager;
             _databaseManager = databaseManager;
@@ -37,6 +39,7 @@ namespace VotesTotUp.ViewModel
 
             var candidates = _databaseManager.Candidate.Get();
             Candidates = candidates.Select(x => new CandidateControl { Name = x.Name, Party = x.Party.Name, Vote = false }).ToList();
+            _logger = logger;
         }
 
         #endregion Constructors
@@ -125,26 +128,35 @@ namespace VotesTotUp.ViewModel
 
         private void Vote()
         {
-            if (Candidates.Where(x => x.Vote).Count() == 1)
+            try
             {
-                _voter.VoteValid = true;
-                _voter.Voted = true;
-                Voted = true;
-            }
-            else
-            {
-                _voter.VoteValid = false;
-                _voter.Voted = true;
-                Voted = true;
-            }
 
-            foreach (var candidate in Candidates.Where(X => X.Vote == true))
-            {
-                _voter.Candidates.Add(_databaseManager.Candidate.Get(candidate.Name));
-            }
 
-            _databaseManager.Voter.Update(_voter);
-            _viewManager.OpenView<StatisticsViewModel>();
+                if (Candidates.Where(x => x.Vote).Count() == 1)
+                {
+                    _voter.VoteValid = true;
+                    _voter.Voted = true;
+                    Voted = true;
+                }
+                else
+                {
+                    _voter.VoteValid = false;
+                    _voter.Voted = true;
+                    Voted = true;
+                }
+
+                foreach (var candidate in Candidates.Where(X => X.Vote == true))
+                {
+                    _voter.Candidates.Add(_databaseManager.Candidate.Get(candidate.Name));
+                }
+
+                _databaseManager.Voter.Update(_voter);
+                _viewManager.OpenView<StatisticsViewModel>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+            }
         }
 
         #endregion Methods

@@ -14,14 +14,14 @@ namespace VotesTotUp.Managers
 
         #region Constructors
 
-        public DatabaseManager(DbModelContainer dbContext, Encryption encryption)
+        public DatabaseManager(DbModelContainer dbContext, Encryption encryption, PartyService partyService, VoterService voterService, CandidateService candidateService, StatisticService statisticService)
         {
-            _dbContext = new DbModelContainer();
+            _dbContext = dbContext;
 
-            Party = new PartyService(_dbContext);
-            Voter = new VoterService(_dbContext, encryption);
-            Candidate = new CandidateService(_dbContext);
-            Statistic = new StatisticService(_dbContext);
+            Party = partyService;
+            Voter = voterService;
+            Candidate = candidateService;
+            Statistic = statisticService;
         }
 
         #endregion Constructors

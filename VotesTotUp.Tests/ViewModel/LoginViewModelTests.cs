@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using VotesTotUp.Managers;
 using ViewManagement;
 using Microsoft.Practices.Unity;
+using VotesTotUp.Data.Database.Services;
+using VotesTotUp.Data.Helpers;
+using VotesTotUp.Data.Database.Statistic;
 
 namespace VotesTotUp.ViewModel.Tests
 {
@@ -19,8 +22,17 @@ namespace VotesTotUp.ViewModel.Tests
 
         public LoginViewModelTests()
         {
-            databaseManager = new DatabaseManager(new DbModelContainer(), new Data.Helpers.Encryption());
-            currentSessionManager = new CurrentSessionManager(new ViewManager(new IoCManager(new UnityContainer())), databaseManager);
+            var dbcontainer = new DbModelContainer();
+            var encryption = new Encryption();
+            var logmanager = new LogManager();
+            var voterService = new VoterService(dbcontainer, encryption, logmanager);
+            var statisticService = new StatisticService(dbcontainer, logmanager);
+            var partyService = new PartyService(dbcontainer, logmanager);
+            var candidateService = new CandidateService(dbcontainer, logmanager);
+
+
+            databaseManager = new DatabaseManager(dbcontainer, new Data.Helpers.Encryption(), partyService, voterService, candidateService, statisticService);
+            currentSessionManager = new CurrentSessionManager(new ViewManager(new IoCManager(new UnityContainer())), databaseManager, logmanager);
         }
 
 
