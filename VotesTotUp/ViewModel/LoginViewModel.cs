@@ -16,9 +16,9 @@ namespace VotesTotUp.ViewModel
             _currentSessionManager = currentSessionManager;
             _databaseManager = databaseManager;
         }
+
         #region Fields
 
-        private RelayCommand _debugCommand;
         private string _firstName;
         private string _lastName;
         private RelayCommand _loginCommand;
@@ -133,15 +133,17 @@ namespace VotesTotUp.ViewModel
             return s;
         }
 
-        private void ValidateName(string firstName, string lastName)
+        public bool ValidateName(string firstName, string lastName)
         {
             if (firstName.Any(x => char.IsDigit(x)))
                 throw new Exception("Name must not contain any letters or digits!");
             if (lastName.Any(x => char.IsDigit(x)))
                 throw new Exception("Name must not contain any letters or digits!");
+
+            return true;
         }
 
-        private void ValidatePesel(string pesel)
+        public bool ValidatePesel(string pesel)
         {
             pesel = pesel.Replace(" ", "");
 
@@ -150,6 +152,9 @@ namespace VotesTotUp.ViewModel
 
             if (pesel.Length != 11)
                 throw new Exception("Pesel must contain 11 digits!");
+
+            return true;
+
         }
 
         #endregion Methods
