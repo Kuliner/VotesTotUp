@@ -9,6 +9,7 @@ using VotesTotUp.Data.Helpers;
 using VotesTotUp.Managers;
 using VotesTotUp.ViewModel;
 using VotesTotUp.Views;
+using Xceed.Wpf.Toolkit;
 
 namespace VotesTotUp
 {

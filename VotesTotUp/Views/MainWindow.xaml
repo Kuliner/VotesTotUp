@@ -12,7 +12,7 @@
         MinHeight="400"
         Loaded="Window_Loaded"
         mc:Ignorable="d">
-    <xctk:BusyIndicator IsBusy="{Binding IsBusy}">
+    <xctk:BusyIndicator Name="BusyIndicator">
         <ContentControl Name="WindowContent" />
     </xctk:BusyIndicator>
 </Window>

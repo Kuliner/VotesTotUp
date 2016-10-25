@@ -1,8 +1,9 @@
 using GalaSoft.MvvmLight;
+using ViewManagement;
 
 namespace VotesTotUp.ViewModel
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBaseWrapper
     {
         #region Constructors
 

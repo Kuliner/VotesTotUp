@@ -183,6 +183,7 @@
       <DependentUpon>VotersDbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\CandidateControl.cs" />
+    <Compile Include="Data\ControlBase.cs" />
     <Compile Include="Data\Helpers\PartyExtension.cs" />
     <Compile Include="Data\PartyControl.cs" />
     <Compile Include="Data\Enum.cs" />

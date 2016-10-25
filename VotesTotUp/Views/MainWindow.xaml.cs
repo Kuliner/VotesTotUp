@@ -18,7 +18,9 @@ namespace VotesTotUp.Views
 
         private void Init()
         {
+            BusyIndicator.IsBusy = true;
             Bootstrap.InitAsync(this.WindowContent);
+            BusyIndicator.IsBusy = false;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e) => Init();

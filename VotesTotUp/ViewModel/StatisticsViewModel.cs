@@ -11,7 +11,7 @@ using VotesTotUp.Managers;
 
 namespace VotesTotUp.ViewModel
 {
-    public class StatisticsViewModel : ViewModelBase
+    public class StatisticsViewModel : ViewModelBaseWrapper
     {
         #region Fields
 

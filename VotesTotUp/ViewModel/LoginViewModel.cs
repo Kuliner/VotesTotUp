@@ -3,12 +3,13 @@ using System.Linq;
 using System.Windows;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using ViewManagement;
 using VotesTotUp.Managers;
 using static VotesTotUp.Data.Enum;
 
 namespace VotesTotUp.ViewModel
 {
-    public class LoginViewModel : ViewModelBase
+    public class LoginViewModel : ViewModelBaseWrapper
     {
         public LoginViewModel(CurrentSessionManager currentSessionManager, DatabaseManager databaseManager)
         {

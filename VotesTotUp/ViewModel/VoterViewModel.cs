@@ -9,7 +9,7 @@ using ViewManagement;
 
 namespace VotesTotUp.ViewModel
 {
-    public class VoterViewModel : ViewModelBase
+    public class VoterViewModel : ViewModelBaseWrapper
     {
         private CurrentSessionManager _currentSessionManager;
         private DatabaseManager _databaseManager;
